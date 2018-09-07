@@ -27,7 +27,8 @@ lazy val microservice = (project in file("."))
       fork in Test := false,
       retrieveManaged := true,
       routesGenerator := StaticRoutesGenerator,
-      scalaVersion := "2.11.11"
+      scalaVersion := "2.11.11",
+      majorVersion := 0
     )
     .settings(testOptions in Test := Seq(Tests.Filter(unitFilter)),
       addTestReportOption(Test, "test-reports")
@@ -64,7 +65,7 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test
 
 lazy val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "microservice-bootstrap" % "6.18.0"
+  "uk.gov.hmrc" %% "microservice-bootstrap" % "8.2.0"
 )
 lazy val test = Seq(
   "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % "test,it",
