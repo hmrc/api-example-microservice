@@ -20,7 +20,8 @@ import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
+import play.api.Mode.Mode
+import play.api.{Application, Configuration, Play}
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.hello.config.ServiceLocatorRegistration
 import uk.gov.hmrc.hello.connectors.ServiceLocatorConnector
@@ -37,6 +38,10 @@ class RegisterInServiceLocatorSpec extends UnitSpec with MockitoSugar with Guice
     val mockConnector = mock[ServiceLocatorConnector]
     override val slConnector = mockConnector
     override implicit val hc: HeaderCarrier = HeaderCarrier()
+
+    override protected def mode: Mode = Play.current.mode
+
+    override protected def runModeConfiguration: Configuration = Play.current.configuration
   }
 
   "onStart" should {

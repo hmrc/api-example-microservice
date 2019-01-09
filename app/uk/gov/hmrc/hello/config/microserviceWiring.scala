@@ -16,6 +16,10 @@
 
 package uk.gov.hmrc.hello.config
 
+import akka.actor.ActorSystem
+import com.typesafe.config.Config
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import uk.gov.hmrc.http.hooks.HttpHooks
 import uk.gov.hmrc.http.{HttpDelete, HttpGet, HttpPost, HttpPut}
 import uk.gov.hmrc.play.audit.http.HttpAuditing
@@ -32,12 +36,32 @@ trait Hooks extends HttpHooks with HttpAuditing {
 
 trait WSHttp extends HttpGet with WSGet with HttpPut with WSPut with HttpPost with WSPost with HttpDelete with WSDelete with Hooks with AppName
 
-object WSHttp extends WSHttp
+object WSHttp extends WSHttp {
+  override protected def appNameConfiguration: Configuration = Play.current.configuration
+
+  override protected def actorSystem: ActorSystem = Play.current.actorSystem
+
+  override protected def configuration: Option[Config] = None
+}
 
 object MicroserviceAuditConnector extends AuditConnector with RunMode {
   override lazy val auditingConfig = LoadAuditingConfig("auditing")
+
+  override protected def mode: Mode = Play.current.mode
+
+  override protected def runModeConfiguration: Configuration = Play.current.configuration
 }
 
 object MicroserviceAuthConnector extends AuthConnector with ServicesConfig with WSHttp {
   override val authBaseUrl = baseUrl("auth")
+
+  override protected def mode: Mode = Play.current.mode
+
+  override protected def runModeConfiguration: Configuration = Play.current.configuration
+
+  override protected def appNameConfiguration: Configuration = Play.current.configuration
+
+  override protected def actorSystem: ActorSystem = Play.current.actorSystem
+
+  override protected def configuration: Option[Config] = None
 }

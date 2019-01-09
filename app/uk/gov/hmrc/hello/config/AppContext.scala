@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.hello.config
 
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import play.api.Play._
 import uk.gov.hmrc.play.config.ServicesConfig
 
@@ -24,4 +26,8 @@ object AppContext extends ServicesConfig {
   lazy val appUrl = current.configuration.getString("appUrl").getOrElse(throw new RuntimeException("appUrl is not configured"))
   lazy val serviceLocatorUrl: String = baseUrl("service-locator")
   lazy val registrationEnabled: Boolean = current.configuration.getBoolean(s"${env}.microservice.services.service-locator.enabled").getOrElse(true)
+
+  override protected def mode: Mode = Play.current.mode
+
+  override protected def runModeConfiguration: Configuration = Play.current.configuration
 }

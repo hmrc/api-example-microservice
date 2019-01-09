@@ -18,6 +18,7 @@ package uk.gov.hmrc.hello.config
 
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
+import play.api.Mode.Mode
 import play.api._
 import play.api.mvc.{RequestHeader, Result}
 import uk.gov.hmrc.hello.connectors.ServiceLocatorConnector
@@ -53,6 +54,8 @@ object MicroserviceAuditFilter extends AuditFilter with AppName with Microservic
   override val auditConnector = MicroserviceAuditConnector
 
   override def controllerNeedsAuditing(controllerName: String) = ControllerConfiguration.paramsForController(controllerName).needsAuditing
+
+  override protected def appNameConfiguration: Configuration = Play.current.configuration
 }
 
 object MicroserviceLoggingFilter extends LoggingFilter with MicroserviceFilterSupport {
@@ -96,5 +99,9 @@ object MicroserviceGlobal extends DefaultMicroserviceGlobal with RunMode with Se
     implicit val r = request
     Future.successful(ErrorNotFound)
   }
+
+  override protected def mode: Mode = Play.current.mode
+
+  override protected def runModeConfiguration: Configuration = Play.current.configuration
 }
 
