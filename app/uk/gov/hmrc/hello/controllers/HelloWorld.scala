@@ -20,7 +20,7 @@ import play.api.http.MimeTypes
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService, LiveService, SandboxService}
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -48,7 +48,7 @@ trait HelloWorld extends BaseController with HmrcMimeTypes with ErrorConversion 
     }
   }
 
-  private def callAndRenderHello(f: (Request[_]) => Future[Hello]): (Request[AnyContent]) => Future[Result] = { implicit request =>
+  private def callAndRenderHello(f: Request[_] => Future[Hello]): Request[AnyContent] => Future[Result] = { implicit request =>
     f(request).map {
       renderHello(_)
     } recover {
@@ -56,11 +56,11 @@ trait HelloWorld extends BaseController with HmrcMimeTypes with ErrorConversion 
     }
   }
 
-  final def world: Action[AnyContent] = ValidateAcceptHeader.async { callAndRenderHello((_) => service.fetchWorld) }
+  final def world: Action[AnyContent] = ValidateAcceptHeader.async { callAndRenderHello(_ => service.fetchWorld) }
 
-  final def application: Action[AnyContent] = ValidateAcceptHeader async { callAndRenderHello((_) => service.fetchApplication) }
+  final def application: Action[AnyContent] = ValidateAcceptHeader async { callAndRenderHello(_ => service.fetchApplication) }
 
-  final def user: Action[AnyContent] = ValidateAcceptHeader async { callAndRenderHello((_) => service.fetchUser) }
+  final def user: Action[AnyContent] = ValidateAcceptHeader async { callAndRenderHello(_ => service.fetchUser) }
 }
 
 object SandboxController extends HelloWorld {

@@ -20,21 +20,21 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import uk.gov.hmrc.hello.domain.Registration
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, TestData}
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.http.LazyHttpErrorHandler
+import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.{FakeRequest, Helpers}
+import play.api.test.FakeRequest
 import play.api.{Application, Mode}
 import uk.gov.hmrc.hello.controllers.Documentation
+import uk.gov.hmrc.hello.domain.Registration
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.play.microservice.filters.MicroserviceFilterSupport
 
-class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with MockitoSugar with ScalaFutures with BeforeAndAfterEach  {
+class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
 
   val stubHost = "localhost"
   val stubPort = sys.env.getOrElse("WIREMOCK_SERVICE_LOCATOR_PORT", "11112").toInt
@@ -52,17 +52,18 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
   override def beforeEach() {
     wireMockServer.start()
     WireMock.configureFor(stubHost, stubPort)
-    stubFor(post(urlMatching("http://localhost:11112/registration")).willReturn(aResponse().withStatus(204)))
+    stubFor(post(urlMatching("http://localhost:11112/registration")).willReturn(aResponse().withStatus(NO_CONTENT)))
   }
 
-  trait Setup extends MicroserviceFilterSupport {
+  trait Setup {
     val documentationController = new Documentation(LazyHttpErrorHandler) {}
     val request = FakeRequest()
+    implicit def mat : akka.stream.Materializer = app.injector.instanceOf[akka.stream.Materializer]
   }
 
   "microservice" should {
 
-    "register itelf to service-locator" in new Setup {
+    "register itself to service-locator" in new Setup {
       def regPayloadStringFor(serviceName: String, serviceUrl: String): String =
         Json.toJson(Registration(serviceName, serviceUrl, Some(Map("third-party-api" -> "true")))).toString
 
@@ -77,28 +78,27 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
       def verifyDocumentationPresent(version: String, endpointName: String) {
         withClue(s"Getting documentation version '$version' of endpoint '$endpointName'") {
           val documentationResult = documentationController.documentation(version, endpointName)(request)
-          status(documentationResult) shouldBe 200
+          status(documentationResult) shouldBe OK
         }
       }
 
       val result = documentationController.definition()(request)
-      status(result) shouldBe 200
+      status(result) shouldBe OK
 
       val jsonResponse = jsonBodyOf(result).futureValue
 
       val versions: Seq[String] = (jsonResponse \\ "version") map (_.as[String])
       val endpointNames: Seq[Seq[String]] = (jsonResponse \\ "endpoints").map(_ \\ "endpointName").map(_.map(_.as[String]))
 
-      versions.zip(endpointNames).flatMap { case (version, endpoint) => {
-        endpoint.map(endpointName => (version, endpointName))
-      }
+      versions.zip(endpointNames).flatMap {
+        case (version, endpoint) => endpoint.map(endpointName => (version, endpointName))
       }.foreach { case (version, endpointName) => verifyDocumentationPresent(version, endpointName) }
     }
 
     "provide raml documentation" in new Setup {
       val result = documentationController.raml("1.0", "application.raml")(request)
 
-      status(result) shouldBe 200
+      status(result) shouldBe OK
       bodyOf(result).futureValue should startWith("#%RAML 1.0")
     }
   }

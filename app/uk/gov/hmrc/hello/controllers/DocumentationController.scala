@@ -19,7 +19,7 @@ package uk.gov.hmrc.hello.controllers
 import controllers.AssetsBuilder
 import play.api.http.{HttpErrorHandler, LazyHttpErrorHandler}
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
 class Documentation(httpErrorHandler: HttpErrorHandler) extends AssetsBuilder(httpErrorHandler) with BaseController {
 
