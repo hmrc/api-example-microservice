@@ -49,11 +49,7 @@ class  HelloWorldController @Inject()(service: HelloWorldService)
   }
 
   private def callAndRenderHello(f: Request[_] => Future[Hello]): Request[AnyContent] => Future[Result] = { implicit request =>
-    f(request).map {
-      renderHello(_)
-    } recover {
-      case _ => ErrorInternalServerError
-    }
+    f(request).map(renderHello(_))
   }
 
   final def world: Action[AnyContent] = ValidateAcceptHeader.async { callAndRenderHello(_ => service.fetchWorld) }
