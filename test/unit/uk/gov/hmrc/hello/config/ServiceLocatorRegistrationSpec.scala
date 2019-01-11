@@ -16,42 +16,44 @@
 
 package unit.uk.gov.hmrc.hello.config
 
-import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.hello.config.ServiceLocatorRegistration
+import uk.gov.hmrc.hello.config.{ServiceLocatorRegistration, ServiceLocatorRegistrationConfig}
 import uk.gov.hmrc.hello.connectors.ServiceLocatorConnector
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.Future
-
-class RegisterInServiceLocatorSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
+class ServiceLocatorRegistrationSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder().build()
 
-  trait Setup extends ServiceLocatorRegistration {
+  class Setup(implicit registrationEnabled: Boolean) {
     val mockConnector = mock[ServiceLocatorConnector]
-    override val slConnector = mockConnector
-    override implicit val hc: HeaderCarrier = HeaderCarrier()
+    val underTest = new ServiceLocatorRegistration(
+      ServiceLocatorRegistrationConfig(registrationEnabled),
+      mockConnector
+    )
   }
 
-  "onStart" should {
-    "register the microservice in service locator when registration is enabled" in new Setup {
-      override val registrationEnabled: Boolean = true
-      when(mockConnector.register(any())).thenReturn(Future.successful(true))
-      onStart(app)
-      verify(mockConnector).register(any())
+  "On ServiceLocatorRegistration initialisation" when {
+
+    "registration is enabled" should {
+      implicit val registrationEnabled = true
+
+      "register with service locator" in new Setup {
+        verify(mockConnector).register()
+      }
     }
 
+    "registration is not enabled" should {
+      implicit val registrationEnabled = false
 
-    "not register the microservice in service locator when registration is disabled" in new Setup {
-      override val registrationEnabled: Boolean = false
-      onStart(app)
-      verify(mockConnector, never()).register(any())
+      "not register with service locator" in new Setup {
+        verify(mockConnector, never).register()
+      }
     }
   }
 }
+

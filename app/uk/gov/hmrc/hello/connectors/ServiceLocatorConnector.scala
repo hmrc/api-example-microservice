@@ -16,52 +16,35 @@
 
 package uk.gov.hmrc.hello.connectors
 
-import uk.gov.hmrc.hello.config.{AppContext, WSHttp}
-import uk.gov.hmrc.hello.domain.Registration
+import javax.inject.Inject
 import play.api.Logger
 import play.api.http.ContentTypes.JSON
 import play.api.http.HeaderNames.CONTENT_TYPE
-import uk.gov.hmrc.http.{HeaderCarrier, HttpPost}
+import uk.gov.hmrc.hello.domain.Registration
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-trait ServiceLocatorConnector {
-  val appName: String
-  val appUrl: String
-  val serviceUrl: String
-  val handlerOK: () => Unit
-  val handlerError: Throwable => Unit
+class ServiceLocatorConnector @Inject()(http: HttpClient, config: ServiceLocatorConfig)(implicit val ec: ExecutionContext) {
 
-  val metadata: Option[Map[String, String]]
+  def register(): Future[Boolean] = {
+    implicit val hc: HeaderCarrier = new HeaderCarrier
 
+    val registration = Registration(config.appName, config.appUrl, Some(Map("third-party-api" -> "true")))
 
-  val http: HttpPost
-
-
-  def register(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val registration = Registration(appName, appUrl, metadata)
-    http.POST(s"$serviceUrl/registration", registration, Seq(CONTENT_TYPE -> JSON)) map {
-      _ =>
-        handlerOK()
-        true
+    http.POST(s"${config.serviceLocatorBaseUrl}/registration", registration, Seq(CONTENT_TYPE -> JSON)) map { _ =>
+      Logger.info("Service is registered on the service locator")
+      true
     } recover {
       case e: Throwable =>
-        handlerError(e)
+        Logger.error("Service could not register on the service locator", e)
         false
     }
   }
 }
 
+case class ServiceLocatorConfig(appName: String, appUrl: String, serviceLocatorBaseUrl: String)
 
-object ServiceLocatorConnector extends ServiceLocatorConnector {
-  override lazy val appName = AppContext.appName
-  override lazy val appUrl = AppContext.appUrl
-  override lazy val serviceUrl = AppContext.serviceLocatorUrl
-  override val http: HttpPost = WSHttp
-  override val handlerOK: () => Unit = () => Logger.info("Service is registered on the service locator")
-  override val handlerError: Throwable => Unit = e => Logger.error(s"Service could not register on the service locator", e)
-  override val metadata: Option[Map[String, String]] = Some(Map("third-party-api" -> "true"))
-}
 
 
