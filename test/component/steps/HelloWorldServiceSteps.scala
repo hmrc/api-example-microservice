@@ -33,18 +33,10 @@ object World {
 
 class HelloWorldServiceSteps extends ScalaDsl with EN with Matchers with HmrcMimeTypes {
 
-  When( """^I GET the LIVE resource '(.*)'$""") { (url: String) =>
+  When( """^I GET the resource '(.*)'$""") { (url: String) =>
     val response  = Http(s"${Env.host}$url").
       addAcceptHeader(World.acceptHeader).asString
 
-    World.responseCode = response.code
-    World.responseBody = response.body
-    World.responseContentType = response.contentType
-  }
-
-  When( """^I GET the SANDBOX resource '(.*)'$""") { (url: String) =>
-    val response = Http(s"${Env.host}$url").
-    addAcceptHeader(World.acceptHeader).asString
     World.responseCode = response.code
     World.responseBody = response.body
     World.responseContentType = response.contentType
@@ -57,7 +49,7 @@ class HelloWorldServiceSteps extends ScalaDsl with EN with Matchers with HmrcMim
   Given( """^header 'Accept' is '(.*)'$""") { (acceptValue: String) =>
     World.acceptHeader = acceptValue match {
       case "not provided" => AcceptMissing
-      case "bad formatted" => AcceptBadFormat
+      case "badly formatted" => AcceptBadFormat
       case "valid json" => AcceptValidJsonv
       case "valid xml" => AcceptValidXml
       case _ => throw new scala.RuntimeException("Undefined value for accept in the step")

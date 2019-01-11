@@ -17,11 +17,13 @@
 package uk.gov.hmrc.hello.controllers
 
 import controllers.AssetsBuilder
-import play.api.http.{HttpErrorHandler, LazyHttpErrorHandler}
+import javax.inject.{Inject, Singleton}
+import play.api.http.HttpErrorHandler
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
-class Documentation(httpErrorHandler: HttpErrorHandler) extends AssetsBuilder(httpErrorHandler) with BaseController {
+@Singleton
+class Documentation @Inject()(httpErrorHandler: HttpErrorHandler) extends AssetsBuilder(httpErrorHandler) with BaseController {
 
   def documentation(version: String, endpointName: String): Action[AnyContent] = {
     super.at(s"/public/api/documentation/$version", s"${endpointName.replaceAll(" ", "-")}.xml")
@@ -35,5 +37,3 @@ class Documentation(httpErrorHandler: HttpErrorHandler) extends AssetsBuilder(ht
     super.at(s"/public/api/conf/$version", file)
   }
 }
-
-object Documentation extends Documentation(LazyHttpErrorHandler)

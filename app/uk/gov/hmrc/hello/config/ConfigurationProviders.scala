@@ -47,5 +47,3 @@ class ServiceLocatorConfigProvider @Inject()(override val runModeConfiguration: 
     ServiceLocatorConfig(appName, appUrl, serviceLocatorBaseUrl)
   }
 }
-
-

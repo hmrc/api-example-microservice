@@ -1,7 +1,7 @@
 import _root_.play.core.PlayVersion
 import _root_.play.sbt.PlayImport._
 import _root_.play.sbt.PlayScala
-import play.routes.compiler.StaticRoutesGenerator
+import play.routes.compiler.InjectedRoutesGenerator
 import play.sbt.routes.RoutesKeys.routesGenerator
 import sbt.Keys.{testOptions, _}
 import sbt.Tests.{Group, SubProcess}
@@ -26,7 +26,7 @@ lazy val microservice = (project in file("."))
     parallelExecution in Test := false,
     fork in Test := false,
     retrieveManaged := true,
-    routesGenerator := StaticRoutesGenerator,
+    routesGenerator := InjectedRoutesGenerator,
     scalaVersion := "2.11.11",
     majorVersion := 0
   )
@@ -93,6 +93,6 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
   }
 
 // Coverage configuration
-coverageMinimum := 80
+coverageMinimum := 95
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo"

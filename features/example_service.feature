@@ -1,10 +1,10 @@
-Feature: Fetch Example for Live
+Feature: Fetch Example
 
   Background:
     Given header 'Accept' is 'valid json'
 
-  Scenario: Fetch World for Live
-    And I GET the LIVE resource '/world'
+  Scenario: Fetch World
+    And I GET the resource '/world'
     Then the status code should be 'OK'
     And I should receive JSON response:
     """
@@ -14,8 +14,8 @@ Feature: Fetch Example for Live
     """
 
 
-  Scenario: Fetch User for Live
-    And I GET the LIVE resource '/user'
+  Scenario: Fetch User
+    And I GET the resource '/user'
     Then the status code should be 'OK'
     And I should receive JSON response:
     """
@@ -24,8 +24,8 @@ Feature: Fetch Example for Live
     }
     """
 
-  Scenario: Fetch Application for Live
-    And I GET the LIVE resource '/application'
+  Scenario: Fetch Application
+    And I GET the resource '/application'
     Then the status code should be 'OK'
     And I should receive JSON response:
     """

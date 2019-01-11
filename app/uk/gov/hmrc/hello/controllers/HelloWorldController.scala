@@ -16,21 +16,21 @@
 
 package uk.gov.hmrc.hello.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.hello.services.{Hello, HelloWorldService, LiveService, SandboxService}
+import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
-trait HelloWorld extends BaseController with HmrcMimeTypes with ErrorConversion with HeaderValidator with XmlHeaderHandling {
-
-  val service: HelloWorldService
-
-  implicit val hc: HeaderCarrier
+@Singleton
+class  HelloWorldController @Inject()(service: HelloWorldService)
+  extends BaseController with HmrcMimeTypes with ErrorConversion with HeaderValidator with XmlHeaderHandling {
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   // Due to the need to demonstrate validation, some of these Accept headers are never present by the time we reach here.
   // However it does demonstrate how to handle multiple versions and types.
@@ -61,14 +61,4 @@ trait HelloWorld extends BaseController with HmrcMimeTypes with ErrorConversion 
   final def application: Action[AnyContent] = ValidateAcceptHeader async { callAndRenderHello(_ => service.fetchApplication) }
 
   final def user: Action[AnyContent] = ValidateAcceptHeader async { callAndRenderHello(_ => service.fetchUser) }
-}
-
-object SandboxController extends HelloWorld {
-  override val service = SandboxService
-  override implicit val hc: HeaderCarrier = HeaderCarrier()
-}
-
-object LiveController extends HelloWorld {
-  override val service = LiveService
-  override implicit val hc: HeaderCarrier = HeaderCarrier()
 }

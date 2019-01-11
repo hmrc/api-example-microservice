@@ -18,7 +18,7 @@ package uk.gov.hmrc.hello.config
 
 import uk.gov.hmrc.hello.connectors.ServiceLocatorConfig
 import play.api.inject.{Binding, Module}
-import play.api.{Environment, Configuration}
+import play.api.{Configuration, Environment}
 
 class ConfigurationModule extends Module {
 
