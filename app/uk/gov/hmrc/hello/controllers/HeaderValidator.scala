@@ -16,14 +16,16 @@
 
 package uk.gov.hmrc.hello.controllers
 
+import javax.inject.{Inject, Singleton}
 import play.api.mvc._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
+@Singleton
+class HeaderValidator @Inject() (cc: ControllerComponents) extends Results with HmrcMimeTypes with ErrorConversion {
 
-trait HeaderValidator extends Results with HmrcMimeTypes with ErrorConversion {
   val validateVersion: String => Boolean = v => v == "1.0" || v == "2.0"
 
   val validateContentType: String => Boolean = ct => ct == "json" || ct == "xml"
@@ -33,21 +35,26 @@ trait HeaderValidator extends Results with HmrcMimeTypes with ErrorConversion {
   val acceptHeaderValidationRules: Option[String] => Boolean =
     _ flatMap (a => matchHeader(a) map (res => validateContentType(res.group("contenttype")) && validateVersion(res.group("version")))) getOrElse false
 
-  def validateAction(rules: Option[String] => Boolean) = new ActionBuilder[Request] with ActionFilter[Request] {
+  def validateAction(rules: Option[String] => Boolean) = {
+    new ActionBuilder[Request, AnyContent] with ActionFilter[Request] {
 
-    def filter[T](input: Request[T]) = Future.successful {
+      override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+      override protected val executionContext: ExecutionContext = cc.executionContext
 
-      implicit val r = input
+      def filter[T](input: Request[T]) = Future.successful {
 
-      if (! rules(input.headers.get("Accept")) ) {
-        Some(ErrorAcceptHeaderInvalid)
-      } else {
-        None
+        implicit val r = input
+
+        if (!rules(input.headers.get("Accept"))) {
+          Some(ErrorAcceptHeaderInvalid)
+        } else {
+          None
+        }
       }
-    }
 
+    }
   }
 
-  val ValidateAcceptHeader : ActionBuilder[Request] = validateAction(acceptHeaderValidationRules)
+  val validateAcceptHeader: ActionBuilder[Request, AnyContent] = validateAction(acceptHeaderValidationRules)
 
 }

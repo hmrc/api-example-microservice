@@ -24,7 +24,9 @@ import cucumber.api.CucumberOptions
 import cucumber.api.junit.Cucumber
 import org.junit.runner.RunWith
 import org.junit.{AfterClass, BeforeClass}
-import play.api.test.{FakeApplication, TestServer}
+import play.api.Mode
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.TestServer
 
 @RunWith(classOf[Cucumber])
 @CucumberOptions(
@@ -39,17 +41,21 @@ class FeatureSuite
 
 object FeatureSuite extends StubApplicationConfiguration {
 
-  private lazy val testServer = new TestServer(hostPost, app)
+  private lazy val testServer = TestServer(hostPost, app)
 
-  private lazy val app = FakeApplication(additionalConfiguration = config )
+  private lazy val app =
+    GuiceApplicationBuilder()
+      .configure(config)
+      .in(Mode.Test)
+      .build()
 
   private lazy val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
 
   private var isSetup = false
 
   /**
-   * Apparently necessary for running individual features from within IntelliJ.
-   */
+    * Apparently necessary for running individual features from within IntelliJ.
+    */
   def ensureSetup(): Unit = if (!isSetup) setup()
 
   @BeforeClass

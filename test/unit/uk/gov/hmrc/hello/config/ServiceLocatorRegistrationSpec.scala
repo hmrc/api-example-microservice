@@ -18,16 +18,11 @@ package unit.uk.gov.hmrc.hello.config
 
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.hello.config.{ServiceLocatorRegistration, ServiceLocatorRegistrationConfig}
 import uk.gov.hmrc.hello.connectors.ServiceLocatorConnector
 import uk.gov.hmrc.play.test.UnitSpec
 
-class ServiceLocatorRegistrationSpec extends UnitSpec with MockitoSugar with GuiceOneAppPerSuite {
-
-  override implicit lazy val app: Application = new GuiceApplicationBuilder().build()
+class ServiceLocatorRegistrationSpec extends UnitSpec with MockitoSugar {
 
   class Setup(implicit registrationEnabled: Boolean) {
     val mockConnector = mock[ServiceLocatorConnector]

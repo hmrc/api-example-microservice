@@ -24,13 +24,12 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, TestData}
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import play.api.http.LazyHttpErrorHandler
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.{Application, Mode}
-import uk.gov.hmrc.hello.controllers.Documentation
+import uk.gov.hmrc.hello.controllers.DocumentationController
 import uk.gov.hmrc.hello.domain.Registration
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -45,6 +44,7 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
     .configure(Map(
       "appName" -> "application-name",
       "appUrl" -> "http://example.com",
+      "auditing.enabled" -> false,
       "Test.microservice.services.service-locator.host" -> stubHost,
       "Test.microservice.services.service-locator.port" -> stubPort))
     .in(Mode.Test).build()
@@ -56,9 +56,9 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
   }
 
   trait Setup {
-    val documentationController = new Documentation(LazyHttpErrorHandler) {}
+    implicit def mat: akka.stream.Materializer = app.injector.instanceOf[akka.stream.Materializer]
+    val documentationController = app.injector.instanceOf[DocumentationController]
     val request = FakeRequest()
-    implicit def mat : akka.stream.Materializer = app.injector.instanceOf[akka.stream.Materializer]
   }
 
   "microservice" should {
