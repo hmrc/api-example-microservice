@@ -21,15 +21,16 @@ import play.api.http.MimeTypes
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
-class  HelloWorldController @Inject()(service: HelloWorldService)
-  extends BaseController with HmrcMimeTypes with ErrorConversion with HeaderValidator with XmlHeaderHandling {
+class HelloWorldController @Inject()(headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)
+  extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling {
+
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   // Due to the need to demonstrate validation, some of these Accept headers are never present by the time we reach here.
@@ -56,9 +57,9 @@ class  HelloWorldController @Inject()(service: HelloWorldService)
     }
   }
 
-  final def world: Action[AnyContent] = ValidateAcceptHeader.async { callAndRenderHello(_ => service.fetchWorld) }
+  final def world: Action[AnyContent] = headerValidator.validateAcceptHeader.async { callAndRenderHello(_ => service.fetchWorld) }
 
-  final def application: Action[AnyContent] = ValidateAcceptHeader async { callAndRenderHello(_ => service.fetchApplication) }
+  final def application: Action[AnyContent] = headerValidator.validateAcceptHeader async { callAndRenderHello(_ => service.fetchApplication) }
 
-  final def user: Action[AnyContent] = ValidateAcceptHeader async { callAndRenderHello(_ => service.fetchUser) }
+  final def user: Action[AnyContent] = headerValidator.validateAcceptHeader async { callAndRenderHello(_ => service.fetchUser) }
 }

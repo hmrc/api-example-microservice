@@ -19,31 +19,26 @@ package uk.gov.hmrc.hello.config
 import javax.inject.{Inject, Provider, Singleton}
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.hello.connectors.ServiceLocatorConfig
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class ServiceLocatorRegistrationConfigProvider @Inject()(override val runModeConfiguration: Configuration, environment: Environment)
-  extends Provider[ServiceLocatorRegistrationConfig] with ServicesConfig {
-
-  override protected def mode = environment.mode
+class ServiceLocatorRegistrationConfigProvider @Inject()(runModeConfiguration: Configuration, environment: Environment, servicesConfig: ServicesConfig)
+  extends Provider[ServiceLocatorRegistrationConfig] {
 
   override def get() = {
-    val registrationEnabled = getConfBool("service-locator.enabled", defBool = true)
+    val registrationEnabled = servicesConfig.getConfBool("service-locator.enabled", defBool = true)
     ServiceLocatorRegistrationConfig(registrationEnabled)
   }
-
 }
 
 @Singleton
-class ServiceLocatorConfigProvider @Inject()(override val runModeConfiguration: Configuration, environment: Environment)
-  extends Provider[ServiceLocatorConfig] with ServicesConfig {
-
-  override protected def mode = environment.mode
+class ServiceLocatorConfigProvider @Inject()(runModeConfiguration: Configuration, environment: Environment, servicesConfig: ServicesConfig)
+  extends Provider[ServiceLocatorConfig] {
 
   override def get() = {
-    val appName = getString("appName")
-    val appUrl = getString("appUrl")
-    val serviceLocatorBaseUrl = baseUrl("service-locator")
+    val appName = servicesConfig.getString("appName")
+    val appUrl = servicesConfig.getString("appUrl")
+    val serviceLocatorBaseUrl = servicesConfig.baseUrl("service-locator")
     ServiceLocatorConfig(appName, appUrl, serviceLocatorBaseUrl)
   }
 }

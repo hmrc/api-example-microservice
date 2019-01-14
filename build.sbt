@@ -1,8 +1,4 @@
-import _root_.play.core.PlayVersion
-import _root_.play.sbt.PlayImport._
 import _root_.play.sbt.PlayScala
-import play.routes.compiler.InjectedRoutesGenerator
-import play.sbt.routes.RoutesKeys.routesGenerator
 import sbt.Keys.{testOptions, _}
 import sbt.Tests.{Group, SubProcess}
 import sbt.{Tests, _}
@@ -22,11 +18,10 @@ lazy val microservice = (project in file("."))
   .settings(
     name := appName,
     targetJvm := "jvm-1.8",
-    libraryDependencies ++= appDependencies,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     parallelExecution in Test := false,
     fork in Test := false,
     retrieveManaged := true,
-    routesGenerator := InjectedRoutesGenerator,
     scalaVersion := "2.11.11",
     majorVersion := 0
   )
@@ -61,27 +56,8 @@ lazy val microservice = (project in file("."))
   .settings(ivyScala := ivyScala.value map {
     _.copy(overrideScalaVersion = true)
   })
+
 lazy val ComponentTest = config("component") extend IntegrationTest
-
-lazy val appDependencies: Seq[ModuleID] = compile ++ test
-
-
-lazy val compile = Seq(
-  ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % "4.6.0"
-)
-lazy val test = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.3.0" % "test,it",
-  "org.scalaj" %% "scalaj-http" % "2.4.0" % "test,it",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test,it",
-  "org.pegdown" % "pegdown" % "1.6.0" % "test,it",
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % "test,it",
-  "com.github.tomakehurst" % "wiremock" % "1.58" % "test,it",
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % "test,it",
-  "org.mockito" % "mockito-core" % "1.10.19" % "test,it",
-  "info.cukes" %% "cucumber-scala" % "1.2.5" % "test,it",
-  "info.cukes" % "cucumber-junit" % "1.2.5" % "test,it"
-)
 
 def componentTestFilter(name: String): Boolean = name startsWith "component"
 

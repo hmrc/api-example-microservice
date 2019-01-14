@@ -16,24 +16,23 @@
 
 package uk.gov.hmrc.hello.controllers
 
-import controllers.AssetsBuilder
+import controllers.Assets
 import javax.inject.{Inject, Singleton}
-import play.api.http.HttpErrorHandler
-import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 @Singleton
-class Documentation @Inject()(httpErrorHandler: HttpErrorHandler) extends AssetsBuilder(httpErrorHandler) with BaseController {
+class DocumentationController @Inject()(assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
 
   def documentation(version: String, endpointName: String): Action[AnyContent] = {
-    super.at(s"/public/api/documentation/$version", s"${endpointName.replaceAll(" ", "-")}.xml")
+    assets.at(s"/public/api/documentation/$version", s"${endpointName.replaceAll(" ", "-")}.xml")
   }
 
   def definition(): Action[AnyContent] = {
-    super.at("/public/api", "definition.json")
+    assets.at("/public/api", "definition.json")
   }
 
   def raml(version: String, file: String): Action[AnyContent] = {
-    super.at(s"/public/api/conf/$version", file)
+    assets.at(s"/public/api/conf/$version", file)
   }
 }
