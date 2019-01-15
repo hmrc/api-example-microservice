@@ -9,7 +9,7 @@
   "api": {
     "name": "Hello World",
     "description": "A 'hello world' example of an API on the HMRC API Developer Hub.",
-    "context": "hello",
+    "context": "/hel//lo/",
     "versions": [
       {
         "version": "1.0",
