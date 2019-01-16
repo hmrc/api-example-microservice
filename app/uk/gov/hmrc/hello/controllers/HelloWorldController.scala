@@ -50,11 +50,7 @@ class HelloWorldController @Inject()(headerValidator: HeaderValidator, service: 
   }
 
   private def callAndRenderHello(f: Request[_] => Future[Hello]): Request[AnyContent] => Future[Result] = { implicit request =>
-    f(request).map {
-      renderHello(_)
-    } recover {
-      case _ => ErrorInternalServerError
-    }
+    f(request).map(renderHello(_))
   }
 
   final def world: Action[AnyContent] = headerValidator.validateAcceptHeader.async { callAndRenderHello(_ => service.fetchWorld) }
