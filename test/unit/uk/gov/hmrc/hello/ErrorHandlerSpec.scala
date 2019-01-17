@@ -21,7 +21,6 @@ import akka.stream.ActorMaterializer
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

@@ -18,7 +18,6 @@ package uk.gov.hmrc.hello
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.Configuration
 import play.api.http.Status._
 import play.api.mvc._
 import uk.gov.hmrc.hello.controllers._
