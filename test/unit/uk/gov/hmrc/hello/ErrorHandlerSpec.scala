@@ -29,6 +29,8 @@ import uk.gov.hmrc.hello.ErrorHandler
 import uk.gov.hmrc.hello.controllers.{ErrorGenericBadRequest, ErrorInternalServerError, ErrorNotFound, ErrorUnauthorized}
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,13 +43,12 @@ class ErrorHandlerSpec extends UnitSpec with MockitoSugar {
 
     implicit val fakeRequest = FakeRequest()
     val mockAuditConnector = mock[AuditConnector]
-    val mockConfiguration = mock[Configuration]
     val mockAuditResult = mock[AuditResult]
+    val mockHttpAuditEvent = mock[HttpAuditEvent]
 
     when(mockAuditConnector.sendEvent(any())(any(), any())).thenReturn(Future.successful(mockAuditResult))
-    when(mockConfiguration.getString(any(), any())).thenReturn(None)
 
-    val errorHandler = new ErrorHandler(mockConfiguration, mockAuditConnector)
+    val errorHandler = new ErrorHandler(mockAuditConnector, mockHttpAuditEvent)
   }
 
   "onClientError" should {
