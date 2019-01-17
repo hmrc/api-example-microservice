@@ -17,19 +17,20 @@
 package uk.gov.hmrc.hello
 
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+
 import play.api.http.Status._
 import play.api.mvc._
 import uk.gov.hmrc.hello.controllers._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ErrorHandler @Inject()(configuration: Configuration, auditConnector: AuditConnector)
+class ErrorHandler @Inject()(auditConnector: AuditConnector, httpAuditEvent: HttpAuditEvent)
                             (implicit ec: ExecutionContext)
-  extends JsonErrorHandler(configuration, auditConnector) with ErrorConversion {
+  extends JsonErrorHandler(auditConnector, httpAuditEvent) with ErrorConversion {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     implicit val req = request
