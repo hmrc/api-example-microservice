@@ -63,14 +63,6 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
 
   "microservice" should {
 
-    "register itself to service-locator" in new Setup {
-      def regPayloadStringFor(serviceName: String, serviceUrl: String): String =
-        Json.toJson(Registration(serviceName, serviceUrl, Some(Map("third-party-api" -> "true")))).toString
-
-      verify(1, postRequestedFor(urlMatching("/registration")).
-        withHeader("content-type", equalTo("application/json")).
-        withRequestBody(equalTo(regPayloadStringFor("application-name", "http://example.com"))))
-    }
 
     "provide definition endpoint and documentation endpoint for each api" in new Setup {
       def normalizeEndpointName(endpointName: String): String = endpointName.replaceAll(" ", "-")
