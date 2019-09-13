@@ -10,7 +10,7 @@ object AppDependencies {
   )
 
   def test(scope: String = "test,it") = Seq(
-    "uk.gov.hmrc" %% "hmrctest" % "3.4.0-play-25" % "test,it",
+    "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % "test,it",
     "org.scalaj" %% "scalaj-http" % "2.4.0" % "test,it",
     "org.scalatest" %% "scalatest" % "3.0.5" % "test,it",
     "org.pegdown" % "pegdown" % "1.6.0" % "test,it",
