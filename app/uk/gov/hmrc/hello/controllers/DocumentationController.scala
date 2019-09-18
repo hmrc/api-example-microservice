@@ -24,10 +24,6 @@ import uk.gov.hmrc.play.bootstrap.controller.BackendController
 @Singleton
 class DocumentationController @Inject()(assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
 
-  def documentation(version: String, endpointName: String): Action[AnyContent] = {
-    assets.at(s"/public/api/documentation/$version", s"${endpointName.replaceAll(" ", "-")}.xml")
-  }
-
   def definition(): Action[AnyContent] = {
     assets.at("/public/api", "definition.json")
   }
