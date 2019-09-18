@@ -67,13 +67,6 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
     "provide definition endpoint and documentation endpoint for each api" in new Setup {
       def normalizeEndpointName(endpointName: String): String = endpointName.replaceAll(" ", "-")
 
-      def verifyDocumentationPresent(version: String, endpointName: String) {
-        withClue(s"Getting documentation version '$version' of endpoint '$endpointName'") {
-          val documentationResult = documentationController.documentation(version, endpointName)(request)
-          status(documentationResult) shouldBe OK
-        }
-      }
-
       val result = documentationController.definition()(request)
       status(result) shouldBe OK
 
@@ -82,9 +75,6 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
       val versions: Seq[String] = (jsonResponse \\ "version") map (_.as[String])
       val endpointNames: Seq[Seq[String]] = (jsonResponse \\ "endpoints").map(_ \\ "endpointName").map(_.map(_.as[String]))
 
-      versions.zip(endpointNames).flatMap {
-        case (version, endpoint) => endpoint.map(endpointName => (version, endpointName))
-      }.foreach { case (version, endpointName) => verifyDocumentationPresent(version, endpointName) }
     }
 
     "provide raml documentation" in new Setup {
