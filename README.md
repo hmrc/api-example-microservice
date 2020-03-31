@@ -23,7 +23,7 @@ In the API definition, `authType` should be set to `NONE`
  ```
 
 ## hello-application
-This is an application-restricted resource (hence it requires a server token in the `Authorization` header)
+This is an application-restricted resource (hence it requires an OAuth 2.0 token in the `Authorization` header)
 
 request: 
 ```
@@ -41,7 +41,7 @@ In the API definition, `authType` should be set to `APPLICATION`
  ```
 
 ## hello-user
-This is a user-restricted resource (hence it requires a user token in the `Authorization` header`)
+This is a user-restricted resource (hence it requires an OAuth 2.0 token generated with the authorization code grant in the `Authorization` header`)
 
 request: 
 ```
