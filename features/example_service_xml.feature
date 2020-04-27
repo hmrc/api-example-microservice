@@ -8,7 +8,7 @@ Feature: Fetch Example XML
     Then the status code should be 'OK'
     And I should receive XML response:
     """
-    <?xml version='1.0' encoding='ISO-8859-1'?>
+    <?xml version='1.0' encoding='UTF-8'?>
 <Hello><message>Hello World</message></Hello>
     """
 
@@ -17,7 +17,7 @@ Feature: Fetch Example XML
     Then the status code should be 'OK'
     And I should receive XML response:
     """
-    <?xml version='1.0' encoding='ISO-8859-1'?>
+    <?xml version='1.0' encoding='UTF-8'?>
 <Hello><message>Hello User</message></Hello>
     """
 
@@ -26,6 +26,6 @@ Feature: Fetch Example XML
     Then the status code should be 'OK'
     And I should receive XML response:
     """
-    <?xml version='1.0' encoding='ISO-8859-1'?>
+    <?xml version='1.0' encoding='UTF-8'?>
 <Hello><message>Hello Application</message></Hello>
     """

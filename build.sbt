@@ -29,8 +29,8 @@ lazy val test = Seq(
   "com.github.tomakehurst" % "wiremock" % "1.58" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % scope,
   "org.mockito" % "mockito-core" % "3.3.3" % scope,
-  "info.cukes" %% "cucumber-scala" % "1.2.5" % scope,
-  "info.cukes" % "cucumber-junit" % "1.2.5" % scope
+  "io.cucumber" %% "cucumber-scala" % "4.7.1" % scope,
+  "io.cucumber" % "cucumber-junit" % "4.7.1" % scope
 )
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)

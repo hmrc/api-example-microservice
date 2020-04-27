@@ -20,8 +20,8 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import component.steps.Env._
-import cucumber.api.CucumberOptions
-import cucumber.api.junit.Cucumber
+import io.cucumber.junit.CucumberOptions
+import io.cucumber.junit.Cucumber
 import org.junit.runner.RunWith
 import org.junit.{AfterClass, BeforeClass}
 import play.api.Mode
@@ -32,10 +32,10 @@ import play.api.test.TestServer
 @CucumberOptions(
   features = Array("features"),
   glue = Array("component/steps"),
-  format = Array("pretty",
+  plugin = Array("pretty",
     "html:target/component-reports/cucumber",
     "json:target/component-reports/cucumber.json"),
-  tags = Array("~@wip")
+  tags = Array("not @wip")
 )
 class FeatureSuite
 
