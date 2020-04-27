@@ -19,6 +19,7 @@ package uk.gov.hmrc.hello
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import org.mockito.ArgumentMatchers.any
+import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
@@ -45,6 +46,8 @@ class ErrorHandlerSpec extends UnitSpec with MockitoSugar {
     val mockConfiguration = mock[Configuration]
 
     when(mockAuditConnector.sendEvent(any())(any(), any())).thenReturn(Future.successful(mockAuditResult))
+
+    given(mockConfiguration.getOptional[Seq[Int]]("bootstrap.errorHandler.warnOnly.statusCodes")).willReturn(None)
 
     val errorHandler = new ErrorHandler(mockAuditConnector, mockHttpAuditEvent, mockConfiguration)
   }
