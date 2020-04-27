@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package unit.uk.gov.hmrc.hello
+package uk.gov.hmrc.hello
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.hello.ErrorHandler
+import play.api.Configuration
 import uk.gov.hmrc.hello.controllers.{ErrorGenericBadRequest, ErrorInternalServerError, ErrorNotFound, ErrorUnauthorized}
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-
+import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
 
 class ErrorHandlerSpec extends UnitSpec with MockitoSugar {
   trait BaseSetup {
@@ -44,10 +42,11 @@ class ErrorHandlerSpec extends UnitSpec with MockitoSugar {
     val mockAuditConnector = mock[AuditConnector]
     val mockAuditResult = mock[AuditResult]
     val mockHttpAuditEvent = mock[HttpAuditEvent]
+    val mockConfiguration = mock[Configuration]
 
     when(mockAuditConnector.sendEvent(any())(any(), any())).thenReturn(Future.successful(mockAuditResult))
 
-    val errorHandler = new ErrorHandler(mockAuditConnector, mockHttpAuditEvent)
+    val errorHandler = new ErrorHandler(mockAuditConnector, mockHttpAuditEvent, mockConfiguration)
   }
 
   "onClientError" should {

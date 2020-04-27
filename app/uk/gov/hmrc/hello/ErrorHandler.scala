@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package uk.gov.hmrc.hello
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.http.Status._
 import play.api.mvc._
+import play.api.Configuration
 import uk.gov.hmrc.hello.controllers._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
@@ -28,9 +28,11 @@ import uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ErrorHandler @Inject()(auditConnector: AuditConnector, httpAuditEvent: HttpAuditEvent)
+class ErrorHandler @Inject()(auditConnector: AuditConnector,
+                             httpAuditEvent: HttpAuditEvent,
+                             configuration: Configuration)
                             (implicit ec: ExecutionContext)
-  extends JsonErrorHandler(auditConnector, httpAuditEvent) with ErrorConversion {
+  extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration) with ErrorConversion {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     implicit val req = request
