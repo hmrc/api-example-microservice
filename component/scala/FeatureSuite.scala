@@ -14,13 +14,32 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.hello
+import steps.Env
+import io.cucumber.junit.{Cucumber, CucumberOptions}
+import org.junit.{AfterClass, BeforeClass}
+import org.junit.runner.RunWith
 
-import play.api.libs.json.{JsValue, Json, Writes}
+@RunWith(classOf[Cucumber])
+@CucumberOptions(
+  features = Array("classpath:features"),
+  glue = Array("classpath:steps"),
+  plugin = Array("pretty",
+    "html:target/component-reports/cucumber",
+    "json:target/component-reports/cucumber.json"),
+  tags = Array("not @wip")
+)
+class FeatureSuite
 
-package object controllers {
+object FeatureSuite {
 
-  implicit val errorResponseWrites = new Writes[ErrorResponse] {
-    def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
+  @BeforeClass
+  def setup(): Unit = {
+    Env.startServer()
   }
+
+  @AfterClass
+  def cleanup(): Unit = {
+    Env.shutdown()
+  }
+
 }

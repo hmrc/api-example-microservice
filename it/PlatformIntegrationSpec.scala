@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package it
-
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, TestData}
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.{Application, Mode}
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.{Application, Mode}
 import uk.gov.hmrc.hello.controllers.DocumentationController
-import uk.gov.hmrc.hello.domain.Registration
 import uk.gov.hmrc.play.test.UnitSpec
 
 class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
@@ -65,16 +61,15 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
 
 
     "provide definition endpoint and documentation endpoint for each api" in new Setup {
-      def normalizeEndpointName(endpointName: String): String = endpointName.replaceAll(" ", "-")
 
       val result = documentationController.definition()(request)
       status(result) shouldBe OK
 
       val jsonResponse = jsonBodyOf(result).futureValue
 
-      val versions: Seq[String] = (jsonResponse \\ "version") map (_.as[String])
-      val endpointNames: Seq[Seq[String]] = (jsonResponse \\ "endpoints").map(_ \\ "endpointName").map(_.map(_.as[String]))
-
+      // None of these lines below should throw if successful.
+      (jsonResponse \\ "version") map (_.as[String])
+      (jsonResponse \\ "endpoints").map(_ \\ "endpointName").map(_.map(_.as[String]))
     }
 
     "provide raml documentation" in new Setup {

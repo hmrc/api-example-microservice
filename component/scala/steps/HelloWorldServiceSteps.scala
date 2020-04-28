@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package component.steps
+package steps
 
-import component.steps.Request.{AcceptBadFormat, AcceptMissing, _}
+import steps.Request.{AcceptBadFormat, AcceptMissing, _}
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.Matchers
 import play.api.libs.json.Json
@@ -30,11 +30,10 @@ object World {
   var acceptHeader: AcceptHeader = AcceptUndefined
 }
 
-
 class HelloWorldServiceSteps extends ScalaDsl with EN with Matchers with HmrcMimeTypes {
 
   When( """^I GET the resource '(.*)'$""") { (url: String) =>
-    val response  = Http(s"${Env.host}$url").
+    val response  = Http(s"${Env.testServerHost}$url").
       addAcceptHeader(World.acceptHeader).asString
 
     World.responseCode = response.code
