@@ -19,30 +19,62 @@ package component.steps
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import component.FeatureSuite
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.Matchers
+import play.api.Mode
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.TestServer
 
 trait Env extends ScalaDsl with EN with Matchers {
+  val testServerPort = 9000
+  val testServerHost = sys.env.getOrElse("HOST", s"http://localhost:$testServerPort")
 
-  val hostPost = 9000
-  val host = sys.env.getOrElse("HOST", s"http://localhost:$hostPost")
+  val config = Map[String, Any](
+    "auditing.enabled" -> false,
+    "microservice.services.datastream.host" -> stubHost,
+    "microservice.services.datastream.port" -> stubPort,
+    "microservice.services.datastream.enabled" -> false,
+    "microservice.services.service-locator.host" -> stubHost,
+    "microservice.services.service-locator.port" -> stubPort,
+    "microservice.services.service-locator.enabled" -> false
+  )
+
+  private lazy val application =
+    GuiceApplicationBuilder()
+      .configure(config)
+      .in(Mode.Test)
+      .build()
+
+  private lazy val testServer = TestServer(testServerPort, application)
 
   val stubPort = sys.env.getOrElse("WIREMOCK_PORT", "11111").toInt
   val stubHost = "localhost"
-
   val wireMockUrl = s"http://$stubHost:$stubPort"
-  final val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
 
+  private lazy val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
 
   Before { _ =>
-    FeatureSuite.ensureSetup()
+    if(!wireMockServer.isRunning) {
+      wireMockServer.start()
+    }
+
+    WireMock.configureFor(stubHost, stubPort)
   }
 
   After { _ =>
-    WireMock.reset()
+    if(wireMockServer.isRunning) {
+      WireMock.reset()
+    }
   }
 
+  def startServer() {
+    testServer.start()
+  }
+
+  def shutdown() = {
+    wireMockServer.stop()
+    if (testServer != null) testServer.stop()
+  }
 }
 
 object Env extends Env

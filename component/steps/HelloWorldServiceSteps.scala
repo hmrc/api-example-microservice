@@ -30,11 +30,10 @@ object World {
   var acceptHeader: AcceptHeader = AcceptUndefined
 }
 
-
 class HelloWorldServiceSteps extends ScalaDsl with EN with Matchers with HmrcMimeTypes {
 
   When( """^I GET the resource '(.*)'$""") { (url: String) =>
-    val response  = Http(s"${Env.host}$url").
+    val response  = Http(s"${Env.testServerHost}$url").
       addAcceptHeader(World.acceptHeader).asString
 
     World.responseCode = response.code

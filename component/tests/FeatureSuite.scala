@@ -14,21 +14,34 @@
  * limitations under the License.
  */
 
-package component
-
+package component.tests
 
 import component.steps.Env
-import Env.{stubHost, stubPort}
+import io.cucumber.junit.{Cucumber, CucumberOptions}
+import org.junit.{AfterClass, BeforeClass}
+import org.junit.runner.RunWith
 
-trait StubApplicationConfiguration {
+@RunWith(classOf[Cucumber])
+@CucumberOptions(
+  features = Array("features"),
+  glue = Array("component/steps"),
+  plugin = Array("pretty",
+    "html:target/component-reports/cucumber",
+    "json:target/component-reports/cucumber.json"),
+  tags = Array("not @wip")
+)
+class FeatureSuite
 
-  val config = Map[String, Any](
-    "auditing.enabled" -> false,
-    "microservice.services.datastream.host" -> stubHost,
-    "microservice.services.datastream.port" -> stubPort,
-    "microservice.services.datastream.enabled" -> false,
-    "microservice.services.service-locator.host" -> stubHost,
-    "microservice.services.service-locator.port" -> stubPort,
-    "microservice.services.service-locator.enabled" -> false
-  )
+object FeatureSuite {
+
+  @BeforeClass
+  def setup(): Unit = {
+    Env.startServer()
+  }
+
+  @AfterClass
+  def cleanup(): Unit = {
+    Env.shutdown()
+  }
+
 }

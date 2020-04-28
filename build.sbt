@@ -50,17 +50,17 @@ lazy val microservice = (project in file("."))
     fork in Test := false,
     retrieveManaged := true,
     scalaVersion := "2.12.11",
-    majorVersion := 0
+    majorVersion := 0,
   )
   .settings(
-    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
   )
   .configs(Test)
   .settings(inConfig(Test)(Defaults.testSettings): _*)
   .settings(
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-eT"),
     Test / unmanagedSourceDirectories += baseDirectory.value / "test",
-    addTestReportOption(Test, "test-reports")
+    addTestReportOption(Test, "test-reports"),
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
@@ -70,19 +70,18 @@ lazy val microservice = (project in file("."))
     IntegrationTest / testGrouping := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
     IntegrationTest / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-eT"),
     IntegrationTest / parallelExecution := false,
-    addTestReportOption(IntegrationTest, "int-test-reports")
+    addTestReportOption(IntegrationTest, "int-test-reports"),
   )
   .configs(ComponentTest)
   .settings(inConfig(ComponentTest)(Defaults.testSettings): _*)
   .settings(
     ComponentTest / testOptions := Seq(Tests.Filter(componentTestFilter)),
     ComponentTest / unmanagedSourceDirectories += baseDirectory.value / "component",
-    ComponentTest / unmanagedResourceDirectories += baseDirectory.value / "component"
   )
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     resolvers += Resolver.bintrayRepo("hmrc", "releases"),
-    resolvers += Resolver.jcenterRepo
+    resolvers += Resolver.jcenterRepo,
   )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
