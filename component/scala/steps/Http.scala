@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package component.steps
+package steps
 
 import scalaj.http.HttpRequest
 

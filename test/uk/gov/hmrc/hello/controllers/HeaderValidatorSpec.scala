@@ -18,7 +18,6 @@ package uk.gov.hmrc.hello.controllers
 
 import org.scalatest.Matchers
 import play.api.test.Helpers.stubControllerComponents
-import uk.gov.hmrc.hello.controllers.HeaderValidator
 import uk.gov.hmrc.play.test.UnitSpec
 
 class HeaderValidatorSpec extends UnitSpec with Matchers {

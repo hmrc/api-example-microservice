@@ -11,9 +11,8 @@ import scala.util.Properties
 lazy val appName = "api-example-microservice"
 lazy val appDependencies: Seq[ModuleID] = compile ++ test
 
-lazy val scope: String = "test, it"
-lazy val ComponentTest = config("component") extend IntegrationTest
-def componentTestFilter(name: String): Boolean = name startsWith "component"
+lazy val scope: String = "test, it, component"
+lazy val ComponentTest = config("component") extend Test
 
 lazy val compile = Seq(
   ws,
@@ -23,14 +22,14 @@ lazy val compile = Seq(
 lazy val test = Seq(
   "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % scope,
   "org.scalaj" %% "scalaj-http" % "2.4.0" % scope,
-  "org.scalatest" %% "scalatest" % "3.0.8" % scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "com.github.tomakehurst" % "wiremock" % "1.58" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % scope,
   "org.mockito" % "mockito-core" % "3.3.3" % scope,
   "io.cucumber" %% "cucumber-scala" % "4.7.1" % scope,
-  "io.cucumber" % "cucumber-junit" % "4.7.1" % scope
+  "io.cucumber" % "cucumber-junit" % "4.7.1" % scope,
+  "com.novocode" %  "junit-interface" % "0.11"  % scope,
 )
 
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
@@ -59,14 +58,14 @@ lazy val microservice = (project in file("."))
   .settings(inConfig(Test)(Defaults.testSettings): _*)
   .settings(
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-eT"),
-    Test / unmanagedSourceDirectories += baseDirectory.value / "test",
+    Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test"),
     addTestReportOption(Test, "test-reports"),
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
     IntegrationTest / Keys.fork := false,
-    IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "it",
+    IntegrationTest / unmanagedSourceDirectories := Seq(baseDirectory.value / "it"),
     IntegrationTest / testGrouping := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
     IntegrationTest / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-eT"),
     IntegrationTest / parallelExecution := false,
@@ -75,8 +74,9 @@ lazy val microservice = (project in file("."))
   .configs(ComponentTest)
   .settings(inConfig(ComponentTest)(Defaults.testSettings): _*)
   .settings(
-    ComponentTest / testOptions := Seq(Tests.Filter(componentTestFilter)),
-    ComponentTest / unmanagedSourceDirectories += baseDirectory.value / "component",
+    ComponentTest / testOptions := Seq.empty,
+    ComponentTest / unmanagedSourceDirectories := Seq(baseDirectory.value / "component" / "scala"),
+    ComponentTest / unmanagedResourceDirectories := Seq(baseDirectory.value / "component" / "resources"),
   )
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(

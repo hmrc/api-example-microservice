@@ -19,7 +19,6 @@ package uk.gov.hmrc.hello.controllers
 import org.scalatest.Matchers
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
-import uk.gov.hmrc.hello.controllers.{ErrorAcceptHeaderInvalid, ErrorConversion, HmrcMimeTypes}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ErrorResponseSpec extends UnitSpec with Matchers with ErrorConversion with HmrcMimeTypes {

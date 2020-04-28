@@ -63,16 +63,15 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
 
 
     "provide definition endpoint and documentation endpoint for each api" in new Setup {
-      def normalizeEndpointName(endpointName: String): String = endpointName.replaceAll(" ", "-")
 
       val result = documentationController.definition()(request)
       status(result) shouldBe OK
 
       val jsonResponse = jsonBodyOf(result).futureValue
 
-      val versions: Seq[String] = (jsonResponse \\ "version") map (_.as[String])
-      val endpointNames: Seq[Seq[String]] = (jsonResponse \\ "endpoints").map(_ \\ "endpointName").map(_.map(_.as[String]))
-
+      // None of these lines below should throw if successful.
+      (jsonResponse \\ "version") map (_.as[String])
+      (jsonResponse \\ "endpoints").map(_ \\ "endpointName").map(_.map(_.as[String]))
     }
 
     "provide raml documentation" in new Setup {

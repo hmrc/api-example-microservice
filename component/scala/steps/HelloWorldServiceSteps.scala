@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package component.steps
+package steps
 
-import component.steps.Request.{AcceptBadFormat, AcceptMissing, _}
+import steps.Request.{AcceptBadFormat, AcceptMissing, _}
 import cucumber.api.scala.{EN, ScalaDsl}
 import org.scalatest.Matchers
 import play.api.libs.json.Json

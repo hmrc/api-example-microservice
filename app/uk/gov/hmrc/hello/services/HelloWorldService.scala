@@ -20,8 +20,6 @@ import javax.inject.Singleton
 import play.api.libs.json.Json
 
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-
 
 case class Hello(message: String)
 
@@ -31,13 +29,13 @@ object Hello {
 
 @Singleton
 class HelloWorldService {
-  def fetchWorld(implicit hc: HeaderCarrier): Future[Hello] =
+  def fetchWorld: Future[Hello] =
     Future.successful(Hello("Hello World"))
 
-  def fetchApplication(implicit hc: HeaderCarrier): Future[Hello] =
+  def fetchApplication: Future[Hello] =
     Future.successful(Hello("Hello Application"))
 
-  def fetchUser(implicit hc: HeaderCarrier): Future[Hello] =
+  def fetchUser: Future[Hello] =
     Future.successful(Hello("Hello User"))
 }
 

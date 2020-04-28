@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package component.tests
-
-import component.steps.Env
+import steps.Env
 import io.cucumber.junit.{Cucumber, CucumberOptions}
 import org.junit.{AfterClass, BeforeClass}
 import org.junit.runner.RunWith
 
 @RunWith(classOf[Cucumber])
 @CucumberOptions(
-  features = Array("features"),
-  glue = Array("component/steps"),
+  features = Array("classpath:features"),
+  glue = Array("classpath:steps"),
   plugin = Array("pretty",
     "html:target/component-reports/cucumber",
     "json:target/component-reports/cucumber.json"),
