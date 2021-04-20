@@ -79,10 +79,6 @@ lazy val microservice = (project in file("."))
     ComponentTest / unmanagedResourceDirectories := Seq(baseDirectory.value / "component" / "resources"),
   )
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
-  .settings(
-    resolvers += Resolver.bintrayRepo("hmrc", "releases"),
-    resolvers += Resolver.jcenterRepo,
-  )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests map { test =>
