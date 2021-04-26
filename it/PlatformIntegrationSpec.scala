@@ -41,8 +41,8 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
       "appName" -> "application-name",
       "appUrl" -> "http://example.com",
       "auditing.enabled" -> false,
-      "Test.microservice.services.service-locator.host" -> stubHost,
-      "Test.microservice.services.service-locator.port" -> stubPort))
+      "microservice.services.service-locator.host" -> stubHost,
+      "microservice.services.service-locator.port" -> stubPort))
     .in(Mode.Test).build()
 
   override def beforeEach() {
@@ -58,16 +58,12 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
   }
 
   "microservice" should {
-
-
     "provide definition endpoint and documentation endpoint for each api" in new Setup {
-
       val result = documentationController.definition()(request)
       status(result) shouldBe OK
 
       val jsonResponse = jsonBodyOf(result).futureValue
 
-      // None of these lines below should throw if successful.
       (jsonResponse \\ "version") map (_.as[String])
       (jsonResponse \\ "endpoints").map(_ \\ "endpointName").map(_.map(_.as[String]))
     }
