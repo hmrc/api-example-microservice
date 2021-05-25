@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.hello.controllers
 
-import controllers.Assets
 import javax.inject.{Inject, Singleton}
+
+import controllers.Assets
+
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 

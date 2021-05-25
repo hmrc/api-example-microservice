@@ -17,11 +17,11 @@
 package uk.gov.hmrc.hello.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc._
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
+
+import play.api.mvc._
 
 @Singleton
 class HeaderValidator @Inject() (cc: ControllerComponents) extends Results with HmrcMimeTypes with ErrorConversion {

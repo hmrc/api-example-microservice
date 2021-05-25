@@ -17,9 +17,9 @@
 package uk.gov.hmrc.hello.services
 
 import javax.inject.Singleton
-import play.api.libs.json.Json
-
 import scala.concurrent.Future
+
+import play.api.libs.json.Json
 
 case class Hello(message: String)
 
