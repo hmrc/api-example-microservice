@@ -58,7 +58,7 @@ lazy val microservice = (project in file("."))
     parallelExecution in Test := false,
     fork in Test := false,
     retrieveManaged := true,
-    scalaVersion := "2.12.11",
+    scalaVersion := "2.12.12",
     majorVersion := 0,
   )
   .settings(
