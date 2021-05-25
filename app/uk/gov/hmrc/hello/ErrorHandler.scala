@@ -17,15 +17,16 @@
 package uk.gov.hmrc.hello
 
 import javax.inject.{Inject, Singleton}
-import play.api.http.Status._
-import play.api.mvc._
-import play.api.Configuration
-import uk.gov.hmrc.hello.controllers._
+import scala.concurrent.{ExecutionContext, Future}
+
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
 
-import scala.concurrent.{ExecutionContext, Future}
+import play.api.Configuration
+import play.api.http.Status._
+import play.api.mvc._
+import uk.gov.hmrc.hello.controllers._
 
 @Singleton
 class ErrorHandler @Inject()(auditConnector: AuditConnector,

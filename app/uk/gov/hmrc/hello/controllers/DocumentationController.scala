@@ -16,10 +16,12 @@
 
 package uk.gov.hmrc.hello.controllers
 
-import controllers.Assets
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+
+import controllers.Assets
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
+
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 
 @Singleton
 class DocumentationController @Inject()(assets: Assets, cc: ControllerComponents) extends BackendController(cc) {

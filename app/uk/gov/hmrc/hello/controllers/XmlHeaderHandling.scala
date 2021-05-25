@@ -17,12 +17,10 @@
 package uk.gov.hmrc.hello.controllers
 
 import java.io.StringWriter
-
-import play.api.http.Writeable
-import play.api.http._
-import play.api.mvc._
-
 import scala.xml.{Node, XML}
+
+import play.api.http.{Writeable, _}
+import play.api.mvc._
 
 trait XmlHeaderHandling {
 

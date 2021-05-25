@@ -14,6 +14,16 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test
 lazy val scope: String = "test, it, component"
 lazy val ComponentTest = config("component") extend Test
 
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
+
+inThisBuild(
+  List(
+    scalaVersion := "2.12.12",
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
+)
+
 lazy val compile = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0"
