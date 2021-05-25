@@ -25,9 +25,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.BDDMockito.`given`
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import uk.gov.hmrc.play.test.UnitSpec
 
 import play.api.Configuration
 import play.api.libs.json.Json
@@ -35,6 +32,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import uk.gov.hmrc.hello.controllers.{ErrorGenericBadRequest, ErrorInternalServerError, ErrorNotFound, ErrorUnauthorized}
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
+import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
+import uk.gov.hmrc.play.test.UnitSpec
 
 class ErrorHandlerSpec extends UnitSpec with MockitoSugar {
   trait BaseSetup {
