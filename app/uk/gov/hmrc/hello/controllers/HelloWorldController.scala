@@ -23,10 +23,10 @@ import scala.concurrent.Future
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
 import play.api.mvc._
-
-import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
+
+import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 
 @Singleton
 class HelloWorldController @Inject()(headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)
