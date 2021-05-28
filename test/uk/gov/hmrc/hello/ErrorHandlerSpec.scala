@@ -21,10 +21,6 @@ import scala.concurrent.Future
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import org.mockito.ArgumentMatchers.any
-import org.mockito.BDDMockito.`given`
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
 
 import play.api.Configuration
 import play.api.libs.json.Json
@@ -32,11 +28,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import uk.gov.hmrc.play.test.UnitSpec
 
 import uk.gov.hmrc.hello.controllers.{ErrorGenericBadRequest, ErrorInternalServerError, ErrorNotFound, ErrorUnauthorized}
 
-class ErrorHandlerSpec extends UnitSpec with MockitoSugar {
+import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
+
+class ErrorHandlerSpec extends AsyncHmrcSpec {
   trait BaseSetup {
     implicit val sys = ActorSystem("MyTest")
     implicit val mat = ActorMaterializer()
@@ -47,40 +44,40 @@ class ErrorHandlerSpec extends UnitSpec with MockitoSugar {
     val mockHttpAuditEvent = mock[HttpAuditEvent]
     val mockConfiguration = mock[Configuration]
 
-    when(mockAuditConnector.sendEvent(any())(any(), any())).thenReturn(Future.successful(mockAuditResult))
+    when(mockAuditConnector.sendEvent(*)(*, *)).thenReturn(Future.successful(mockAuditResult))
 
-    given(mockConfiguration.getOptional[Seq[Int]]("bootstrap.errorHandler.warnOnly.statusCodes")).willReturn(None)
+    when(mockConfiguration.getOptional[Seq[Int]]("bootstrap.errorHandler.warnOnly.statusCodes")).thenReturn(None)
 
     val errorHandler = new ErrorHandler(mockAuditConnector, mockHttpAuditEvent, mockConfiguration)
   }
 
   "onClientError" should {
     class Setup(statusCode: Int) extends BaseSetup {
-      val response = await(errorHandler.onClientError(fakeRequest, statusCode, "A message"))
+      val response = errorHandler.onClientError(fakeRequest, statusCode, "A message")
     }
 
     "return ErrorNotFound on 404 Not Found" in new Setup(NOT_FOUND) {
-      jsonBodyOf(response) shouldBe Json.toJson(ErrorNotFound)
+      contentAsJson(response) shouldBe Json.toJson(ErrorNotFound)
     }
 
     "return ErrorGenericBadRequest on 400 Bad Request" in new Setup(BAD_REQUEST) {
-      jsonBodyOf(response) shouldBe Json.toJson(ErrorGenericBadRequest)
+      contentAsJson(response) shouldBe Json.toJson(ErrorGenericBadRequest)
     }
 
     "return ErrorUnauthorized on 401 Unauthorized" in new Setup(UNAUTHORIZED) {
-      jsonBodyOf(response) shouldBe Json.toJson(ErrorUnauthorized)
+      contentAsJson(response) shouldBe Json.toJson(ErrorUnauthorized)
     }
 
     "return a statusCode of 405 with the provided message on 405 Method Not Allowed" in new Setup(METHOD_NOT_ALLOWED) {
-      jsonBodyOf(response) shouldBe Json.obj("statusCode" -> METHOD_NOT_ALLOWED, "message" -> "A message")
+      contentAsJson(response) shouldBe Json.obj("statusCode" -> METHOD_NOT_ALLOWED, "message" -> "A message")
     }
   }
 
   "onServerError" should {
     "return ErrorInternalServerError" in new BaseSetup {
-      val response = await(errorHandler.onServerError(fakeRequest, new RuntimeException("Internal Server Error")))
+      val response = errorHandler.onServerError(fakeRequest, new RuntimeException("Internal Server Error"))
 
-      jsonBodyOf(response) shouldBe Json.toJson(ErrorInternalServerError)
+      contentAsJson(response) shouldBe Json.toJson(ErrorInternalServerError)
     }
   }
 }
