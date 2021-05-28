@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import org.scalatest.{BeforeAndAfterEach, TestData}
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.{Application, Mode}
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
+import play.api.test.Helpers.{contentAsJson, contentAsString, status}
 import uk.gov.hmrc.hello.controllers.DocumentationController
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
+import uk.gov.hmrc.hello.common.utils.WireMockSugar
+import org.scalatest.TestData
 
-class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with MockitoSugar with ScalaFutures with BeforeAndAfterEach {
-
-  val stubHost = "localhost"
-  val stubPort = sys.env.getOrElse("WIREMOCK_SERVICE_LOCATOR_PORT", "11112").toInt
-  val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
-
+class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with WireMockSugar {
   override def newAppForTest(testData: TestData): Application = GuiceApplicationBuilder()
     .configure("run.mode" -> "Stub")
     .configure(Map(
@@ -45,16 +37,11 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
       "microservice.services.service-locator.port" -> stubPort))
     .in(Mode.Test).build()
 
-  override def beforeEach() {
-    wireMockServer.start()
-    WireMock.configureFor(stubHost, stubPort)
-    stubFor(post(urlMatching("http://localhost:11112/registration")).willReturn(aResponse().withStatus(NO_CONTENT)))
-  }
-
   trait Setup {
     implicit def mat: akka.stream.Materializer = app.injector.instanceOf[akka.stream.Materializer]
     val documentationController = app.injector.instanceOf[DocumentationController]
     val request = FakeRequest()
+    stubFor(post(urlMatching("http://localhost:11112/registration")).willReturn(aResponse().withStatus(NO_CONTENT)))
   }
 
   "microservice" should {
@@ -62,7 +49,7 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
       val result = documentationController.definition()(request)
       status(result) shouldBe OK
 
-      val jsonResponse = jsonBodyOf(result).futureValue
+      val jsonResponse = contentAsJson(result)
 
       (jsonResponse \\ "version") map (_.as[String])
       (jsonResponse \\ "endpoints").map(_ \\ "endpointName").map(_.map(_.as[String]))
@@ -72,12 +59,8 @@ class PlatformIntegrationSpec extends UnitSpec with GuiceOneAppPerTest with Mock
       val result = documentationController.raml("1.0", "application.raml")(request)
 
       status(result) shouldBe OK
-      bodyOf(result).futureValue should startWith("#%RAML 1.0")
+      contentAsString(result) should startWith("#%RAML 1.0")
     }
   }
 
-  override protected def afterEach(): Unit = {
-    wireMockServer.stop()
-    wireMockServer.resetMappings()
-  }
 }

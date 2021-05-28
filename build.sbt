@@ -1,17 +1,18 @@
-import _root_.play.sbt.PlayScala
+import play.sbt.PlayScala
 import play.core.PlayVersion
 import sbt.Keys.{testOptions, _}
 import sbt.Tests.{Group, SubProcess}
 import sbt.{Tests, _}
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
+import AppDependencies._
+import bloop.integrations.sbt.BloopDefaults
 
 import scala.util.Properties
 
-lazy val appName = "api-example-microservice"
-lazy val appDependencies: Seq[ModuleID] = compile ++ test
+bloopAggregateSourceDependencies in Global := true
 
-lazy val scope: String = "test, it, component"
+lazy val appName = "api-example-microservice"
 lazy val ComponentTest = config("component") extend Test
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.5.0"
@@ -24,25 +25,7 @@ inThisBuild(
   )
 )
 
-lazy val compile = Seq(
-  ws,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0"
-)
-
-lazy val test = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % scope,
-  "org.scalaj" %% "scalaj-http" % "2.4.0" % scope,
-  "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "com.github.tomakehurst" % "wiremock" % "1.58" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % scope,
-  "org.mockito" % "mockito-core" % "3.3.3" % scope,
-  "io.cucumber" %% "cucumber-scala" % "4.7.1" % scope,
-  "io.cucumber" % "cucumber-junit" % "4.7.1" % scope,
-  "com.novocode" %  "junit-interface" % "0.11"  % scope,
-)
-
-lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
 lazy val microservice = (project in file("."))
@@ -54,39 +37,46 @@ lazy val microservice = (project in file("."))
   .settings(
     name := appName,
     targetJvm := "jvm-1.8",
-    libraryDependencies ++= appDependencies,
+    libraryDependencies ++= dependencies ++ testDependencies("test, it, component"),
     parallelExecution in Test := false,
     fork in Test := false,
     retrieveManaged := true,
     scalaVersion := "2.12.12",
     majorVersion := 0,
   )
+  .settings(ScoverageSettings())
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
   )
   .configs(Test)
   .settings(inConfig(Test)(Defaults.testSettings): _*)
+  .settings(inConfig(Test)(BloopDefaults.configSettings))
   .settings(
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-eT"),
-    Test / unmanagedSourceDirectories := Seq(baseDirectory.value / "test"),
-    addTestReportOption(Test, "test-reports"),
+    Test / unmanagedSourceDirectories += baseDirectory.value / "testcommon",
+    Test / unmanagedSourceDirectories += baseDirectory.value / "test",
+    addTestReportOption(Test, "test-reports")
   )
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
+  .settings(inConfig(IntegrationTest)(BloopDefaults.configSettings))
   .settings(
     IntegrationTest / Keys.fork := false,
-    IntegrationTest / unmanagedSourceDirectories := Seq(baseDirectory.value / "it"),
+    IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "testcommon",
+    IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "it",
     IntegrationTest / testGrouping := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
     IntegrationTest / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-eT"),
     IntegrationTest / parallelExecution := false,
-    addTestReportOption(IntegrationTest, "int-test-reports"),
+    addTestReportOption(IntegrationTest, "int-test-reports")
   )
   .configs(ComponentTest)
   .settings(inConfig(ComponentTest)(Defaults.testSettings): _*)
+  .settings(inConfig(ComponentTest)(BloopDefaults.configSettings))
   .settings(
     ComponentTest / testOptions := Seq.empty,
-    ComponentTest / unmanagedSourceDirectories := Seq(baseDirectory.value / "component" / "scala"),
-    ComponentTest / unmanagedResourceDirectories := Seq(baseDirectory.value / "component" / "resources"),
+    ComponentTest / unmanagedSourceDirectories += baseDirectory.value / "component" / "scala",
+    ComponentTest / unmanagedSourceDirectories += baseDirectory.value / "testcommon",
+    ComponentTest / unmanagedResourceDirectories += baseDirectory.value / "component" / "resources"
   )
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
 
@@ -101,8 +91,3 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
       )
     )
   }
-
-// Coverage configuration
-coverageMinimum := 95
-coverageFailOnMinimum := true
-coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo"

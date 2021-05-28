@@ -19,9 +19,10 @@ package uk.gov.hmrc.hello.controllers
 import org.scalatest.Matchers
 
 import play.api.test.Helpers.stubControllerComponents
-import uk.gov.hmrc.play.test.UnitSpec
 
-class HeaderValidatorSpec extends UnitSpec with Matchers {
+import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
+
+class HeaderValidatorSpec extends AsyncHmrcSpec {
 
   val validator = new HeaderValidator(stubControllerComponents())
 
