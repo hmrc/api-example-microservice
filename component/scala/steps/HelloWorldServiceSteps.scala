@@ -18,10 +18,10 @@ package steps
 
 import steps.Request.{AcceptBadFormat, AcceptMissing, _}
 import cucumber.api.scala.{EN, ScalaDsl}
-import org.scalatest.Matchers
 import play.api.libs.json.Json
 import scalaj.http.Http
 import uk.gov.hmrc.hello.controllers.HmrcMimeTypes
+import org.scalatest.matchers.should.Matchers
 
 object World {
   var responseCode: Int = 0

@@ -19,9 +19,6 @@ package uk.gov.hmrc.hello
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -32,11 +29,11 @@ import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.hello.controllers.{ErrorGenericBadRequest, ErrorInternalServerError, ErrorNotFound, ErrorUnauthorized}
 
 import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
+import akka.stream.testkit.NoMaterializer
 
 class ErrorHandlerSpec extends AsyncHmrcSpec {
   trait BaseSetup {
-    implicit val sys = ActorSystem("MyTest")
-    implicit val mat = ActorMaterializer()
+    implicit val mat = NoMaterializer
 
     implicit val fakeRequest = FakeRequest()
     val mockAuditConnector = mock[AuditConnector]

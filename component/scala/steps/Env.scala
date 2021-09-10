@@ -20,10 +20,10 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import cucumber.api.scala.{EN, ScalaDsl}
-import org.scalatest.Matchers
 import play.api.Mode
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.TestServer
+import org.scalatest.matchers.should.Matchers
 
 trait Env extends ScalaDsl with EN with Matchers {
   val testServerPort = 9000
