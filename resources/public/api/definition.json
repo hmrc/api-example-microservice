@@ -1,7 +1,7 @@
 {
   "scopes": [
     {
-      "key": "salam",
+      "key": "hello",
       "name": "Salam",
       "description": "Say Salam"
     }
