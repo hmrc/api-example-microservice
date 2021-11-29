@@ -1,10 +1,5 @@
 {
   "scopes": [
-    {
-      "key": "hello",
-      "name": "Say Hello",
-      "description": "Say Hello!"
-    }
   ],
   "api": {
     "name": "Hello World",
