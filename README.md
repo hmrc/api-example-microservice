@@ -73,10 +73,10 @@ See definition in `/resources/public/api/definition.json` for the format.
 # Version
 Version of API need to be provided in `Accept` request header
 ```
-Accept: application/vnd.hmrc.v1.0+json or
-Accept: application/vnd.hmrc.v2.0+json or
-Accept: application/vnd.hmrc.v1.0+xml or
-Accept: application/vnd.hmrc.v2.0+xml
+Accept: application/vnd.hmrc.1.0+json or
+Accept: application/vnd.hmrc.2.0+json or
+Accept: application/vnd.hmrc.1.0+xml or
+Accept: application/vnd.hmrc.2.0+xml
 ```
 
 # Run tests
@@ -84,6 +84,15 @@ Accept: application/vnd.hmrc.v2.0+xml
 sbt test
 sbt it:test
 sbt component:test
+```
+
+# Run locally
+```
+./run_local.sh
+```
+and test with
+```
+curl -H "Accept:application/vnd.hmrc.2.0+json" http://localhost:9601/world
 ```
 
 # License
