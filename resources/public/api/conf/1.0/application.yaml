@@ -1,0 +1,87 @@
+
+openapi: "3.0.3"
+
+info:
+  version: 1.0.0
+  title: Hello World
+  description: An example API used as a tutorial for software developers to test their application can connect with the HMRC API Platform.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+    
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk/
+  description: Production
+
+components:
+  parameters:
+    acceptHeader:
+      name: Accept
+      in: header
+      schema:
+        type: string
+        enum: [
+          "application/vnd.hmrc.1.0+json",
+          "application/vnd.hmrc.1.0+xml"
+        ]
+      required: true
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows: 
+        implicit:
+          authorizationUrl: https://example.com/api/oauth/dialog
+          scopes:
+            read:hello: access hello user
+  
+paths:
+  /hello/world:
+    get:
+      summary: A simple example for integrating with an unrestricted service.
+      operationId: world
+      tags:
+      - api-example-microservice
+      parameters:
+      - $ref: '#/components/parameters/acceptHeader'
+      responses:
+        200:
+          description: "OK Response"
+          content:
+            application/json:
+              example: 
+                {
+                  "message" : "Hello World"
+                }
+  /hello/user:
+    get:
+      summary: A simple example for integrating with a user restricted service.
+      operationId: user
+      tags:
+      - api-example-microservice
+      parameters:
+      - $ref: '#/components/parameters/acceptHeader'
+      responses:
+        200:
+          description: "OK Response"
+          content:
+            application/json:
+              example: 
+                {
+                  "message" : "Hello User"
+                }
+        401:
+          description: "UNAUTHORISED Response"
+          content:
+            application/json:
+              example: 
+                {
+                  "code": "MISSING_CREDENTIALS",
+                  "message": "Authentication information is not provided"
+                }
+      security:
+      - OAuth2:
+        - read:hello
+
+      
