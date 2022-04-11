@@ -16,6 +16,22 @@ servers:
   description: Production
 
 components:
+  responses:
+    badOrExpiredTokenResponse:
+      description: |
+        Bad or expired token.
+        This can happen if the user or HMRC revoked or expired an access token.
+        To fix, you should re-authenticate the user.
+      content:
+        application/json:
+          example:
+    forbiddenResponse:
+      description: |
+        Bad OAuth request (wrong consumer key, bad nonce, expired
+        timestamp...). Unfortunately, re-authenticating the user won't help here.
+      content:
+        application/json:
+          example:
   parameters:
     acceptHeader:
       name: Accept
@@ -28,14 +44,22 @@ components:
         ]
       required: true
   securitySchemes:
-    OAuth2:
+    oauth2:
       type: oauth2
+      description: HMRC supports OAuth 2.0 for authenticating User-restricted API requests
       flows: 
-        implicit:
-          authorizationUrl: https://example.com/api/oauth/dialog
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
           scopes:
             read:hello: access hello user
-  
+    serverTokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: HMRC Server token
+      description: HMRC supports http bearer token authenticating applciation-restricted API requests
+
 paths:
   /hello/world:
     get:
@@ -54,6 +78,7 @@ paths:
                 {
                   "message" : "Hello World"
                 }
+                
   /hello/user:
     get:
       summary: A simple example for integrating with a user restricted service.
@@ -81,7 +106,34 @@ paths:
                   "message": "Authentication information is not provided"
                 }
       security:
-      - OAuth2:
+      - oauth2:
         - read:hello
-
-      
+        
+  /hello/application:
+    get:
+      summary: A simple example for integrating with an application restricted service.
+      operationId: application
+      tags:
+      - api-example-microservice
+      parameters:
+      - $ref: '#/components/parameters/acceptHeader'
+      responses:
+        200:
+          description: "OK Response"
+          content:
+            application/json:
+              example: 
+                {
+                  "message" : "Hello Application"
+                }
+        401:
+          description: "UNAUTHORISED Response"
+          content:
+            application/json:
+              example: 
+                {
+                  "code": "MISSING_CREDENTIALS",
+                  "message": "Authentication information is not provided"
+                }
+      security:
+      - serverTokenAuth: []
