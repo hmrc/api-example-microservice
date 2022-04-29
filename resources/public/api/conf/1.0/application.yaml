@@ -69,7 +69,7 @@ components:
         ]
       required: true
   securitySchemes:
-    oauth2:
+    userScheme:
       type: oauth2
       description: HMRC supports OAuth 2.0 for authenticating User-restricted API requests
       flows: 
@@ -78,17 +78,18 @@ components:
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
           refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
           scopes:
-            read:hello: access hello user
-    serverTokenAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: HMRC Server token
-      description: HMRC supports http bearer token authenticating application-restricted API requests
-
+            hello: access hello user
+    appScheme:
+      type: oauth2
+      description: HMRC supports OAuth 2.0 for authenticating app-restricted API requests
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          scopes: {}
 paths:
   /hello/world:
     get:
-      summary: Say hello word
+      summary: Say hello world
       description: |
         A simple example for integrating with an unrestricted service.
 
@@ -137,8 +138,8 @@ paths:
                   "message": "Authentication information is not provided"
                 }
       security:
-      - oauth2:
-        - read:hello
+      - userScheme:
+        - hello
         
   /hello/application:
     get:
@@ -171,4 +172,4 @@ paths:
                   "message": "Authentication information is not provided"
                 }
       security:
-      - serverTokenAuth: []
+      - appScheme: []
