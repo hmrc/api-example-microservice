@@ -10,6 +10,11 @@
         "version": "1.0",
         "status": "STABLE",
         "endpointsEnabled": true
+      },
+      {
+        "version": "2.0",
+        "status": "STABLE",
+        "endpointsEnabled": true
       }
     ]
   }
