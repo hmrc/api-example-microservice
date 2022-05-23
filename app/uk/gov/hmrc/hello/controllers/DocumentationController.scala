@@ -22,15 +22,21 @@ import controllers.Assets
 
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import play.filters.cors.CORSActionBuilder
+import play.api.Configuration
+import akka.stream.Materializer
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class DocumentationController @Inject()(assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
+class DocumentationController @Inject()(configuration: Configuration, assets: Assets, cc: ControllerComponents)(implicit m: Materializer, e: ExecutionContext) extends BackendController(cc) {
 
   def definition(): Action[AnyContent] = {
     assets.at("/public/api", "definition.json")
   }
 
   def raml(version: String, file: String): Action[AnyContent] = {
-    assets.at(s"/public/api/conf/$version", file)
+    CORSActionBuilder(configuration).async { implicit request =>
+      assets.at(s"/public/api/conf/$version", file)(request)
+    }
   }
 }
