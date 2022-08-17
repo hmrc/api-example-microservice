@@ -35,9 +35,9 @@ info:
     [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.
   
 servers:
-- url: https://test-api.service.hmrc.gov.uk
+- url: https://test-api.service.hmrc.gov.uk/hello
   description: Sandbox
-- url: https://api.service.hmrc.gov.uk/
+- url: https://api.service.hmrc.gov.uk/hello
   description: Production
 
 components:
@@ -69,25 +69,29 @@ components:
         ]
       required: true
   securitySchemes:
-    userScheme:
+    userRestricted:
       type: oauth2
-      description: HMRC supports OAuth 2.0 for authenticating User-restricted API requests
-      flows: 
+      description: |
+        HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints for details.
+      flows:
         authorizationCode:
           authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
           refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
           scopes:
             hello: access hello user
-    appScheme:
+    applicationRestricted:
       type: oauth2
-      description: HMRC supports OAuth 2.0 for authenticating app-restricted API requests
+      description: |
+        HMRC supports OAuth 2.0 for authenticating application restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints for details.
       flows:
         clientCredentials:
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
           scopes: {}
 paths:
-  /hello/world:
+  /world:
     get:
       summary: Say hello world
       description: |
@@ -108,7 +112,7 @@ paths:
                   "message" : "Hello World"
                 }
                 
-  /hello/user:
+  /user:
     get:
       summary: Say hello user
       description: |
@@ -138,10 +142,10 @@ paths:
                   "message": "Authentication information is not provided"
                 }
       security:
-      - userScheme:
+      - userRestricted:
         - hello
         
-  /hello/application:
+  /application:
     get:
       summary: Say hello application
       description: | 
@@ -172,4 +176,4 @@ paths:
                   "message": "Authentication information is not provided"
                 }
       security:
-      - appScheme: []
+      - applicationRestricted: []
