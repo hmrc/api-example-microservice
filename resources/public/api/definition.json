@@ -13,7 +13,7 @@
       },
       {
         "version": "2.0",
-        "status": "STABLE",
+        "status": "DEPRECATED",
         "endpointsEnabled": true
       }
     ]
