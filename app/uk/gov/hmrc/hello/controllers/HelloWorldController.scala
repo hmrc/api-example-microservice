@@ -17,20 +17,17 @@
 package uk.gov.hmrc.hello.controllers
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
+import scala.concurrent.{ExecutionContext, Future}
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 
 @Singleton
 class HelloWorldController @Inject()(headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)
-  extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling {
+                                    (implicit ec: ExecutionContext) extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
