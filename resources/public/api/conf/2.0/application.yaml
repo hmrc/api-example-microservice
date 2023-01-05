@@ -107,6 +107,8 @@ paths:
                 {
                   "message" : "Hello World"
                 }
+      security:
+      - {}
                 
   /hello/user:
     get:
