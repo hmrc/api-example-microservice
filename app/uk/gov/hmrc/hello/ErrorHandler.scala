@@ -29,21 +29,18 @@ import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
 import uk.gov.hmrc.hello.controllers._
 
 @Singleton
-class ErrorHandler @Inject()(auditConnector: AuditConnector,
-                             httpAuditEvent: HttpAuditEvent,
-                             configuration: Configuration)
-                            (implicit ec: ExecutionContext)
-  extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration) with ErrorConversion {
+class ErrorHandler @Inject() (auditConnector: AuditConnector, httpAuditEvent: HttpAuditEvent, configuration: Configuration)(implicit ec: ExecutionContext)
+    extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration) with ErrorConversion {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     implicit val req = request
 
     super.onClientError(request, statusCode, message).map { auditedError =>
       statusCode match {
-        case NOT_FOUND => ErrorNotFound
-        case BAD_REQUEST => ErrorGenericBadRequest
+        case NOT_FOUND    => ErrorNotFound
+        case BAD_REQUEST  => ErrorGenericBadRequest
         case UNAUTHORIZED => ErrorUnauthorized
-        case _ => auditedError
+        case _            => auditedError
       }
     }
   }

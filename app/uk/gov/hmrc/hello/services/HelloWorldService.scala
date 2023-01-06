@@ -29,6 +29,7 @@ object Hello {
 
 @Singleton
 class HelloWorldService {
+
   def fetchWorld: Future[Hello] =
     Future.successful(Hello("Hello World"))
 
@@ -38,4 +39,3 @@ class HelloWorldService {
   def fetchUser: Future[Hello] =
     Future.successful(Hello("Hello User"))
 }
-

@@ -30,7 +30,7 @@ class HeaderValidator @Inject() (cc: ControllerComponents) extends Results with 
 
   val validateContentType: String => Boolean = ct => ct == "json" || ct == "xml"
 
-  val matchHeader: String => Option[Match] = new Regex( """^application/vnd[.]{1}hmrc[.]{1}(.*?)[+]{1}(.*)$""", "version", "contenttype") findFirstMatchIn _
+  val matchHeader: String => Option[Match] = new Regex("""^application/vnd[.]{1}hmrc[.]{1}(.*?)[+]{1}(.*)$""", "version", "contenttype") findFirstMatchIn _
 
   val acceptHeaderValidationRules: Option[String] => Boolean =
     _ flatMap (a => matchHeader(a) map (res => validateContentType(res.group("contenttype")) && validateVersion(res.group("version")))) getOrElse false
@@ -38,7 +38,7 @@ class HeaderValidator @Inject() (cc: ControllerComponents) extends Results with 
   def validateAction(rules: Option[String] => Boolean) = {
     new ActionBuilder[Request, AnyContent] with ActionFilter[Request] {
 
-      override val parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
+      override val parser: BodyParser[AnyContent]               = cc.parsers.defaultBodyParser
       override protected val executionContext: ExecutionContext = cc.executionContext
 
       def filter[T](input: Request[T]) = Future.successful {

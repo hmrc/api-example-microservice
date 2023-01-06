@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.hello.controllers
 
-
 sealed abstract class ErrorResponse(
-  val httpStatusCode: Int,
-  val errorCode: String,
-  val message: String
-)
+    val httpStatusCode: Int,
+    val errorCode: String,
+    val message: String
+  )
 import play.api.libs.json._
 
 object ErrorResponse {
+
   implicit val errorResponseWrites = new Writes[ErrorResponse] {
     def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
   }
@@ -49,4 +49,3 @@ case object ErrorAcceptHeaderInvalid extends ErrorResponse(406, "ACCEPT_HEADER_I
 case object ErrorInternalServerError extends ErrorResponse(500, "INTERNAL_SERVER_ERROR", "Internal server error") {
   implicit val fmt: Writes[ErrorInternalServerError.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
 }
-

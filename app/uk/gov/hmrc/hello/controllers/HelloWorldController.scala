@@ -26,24 +26,24 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 
 @Singleton
-class HelloWorldController @Inject()(headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)
-                                    (implicit ec: ExecutionContext) extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling {
+class HelloWorldController @Inject() (headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)(implicit ec: ExecutionContext)
+    extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   // Due to the need to demonstrate validation, some of these Accept headers are never present by the time we reach here.
   // However it does demonstrate how to handle multiple versions and types.
-  private val AcceptsHmrcXml1 = Accepting(VndHmrcXml_1_0)
-  private val AcceptsHmrcXml2 = Accepting(VndHmrcXml_2_0)
+  private val AcceptsHmrcXml1  = Accepting(VndHmrcXml_1_0)
+  private val AcceptsHmrcXml2  = Accepting(VndHmrcXml_2_0)
   private val AcceptsHmrcJson1 = Accepting(VndHmrcJson_1_0)
   private val AcceptsHmrcJson2 = Accepting(VndHmrcJson_2_0)
 
   private def renderHello[T](h: Hello)(implicit request: Request[T]) = {
     render {
       case AcceptsHmrcJson1() | AcceptsHmrcJson2() => Ok(Json.toJson(h))
-      case AcceptsHmrcXml1() => Ok(<Hello><message>{h.message}</message></Hello>).as(MimeTypes.XML)
-      case AcceptsHmrcXml2() => Ok(<Hello2><message>{h.message}</message></Hello2>).as(MimeTypes.XML)
-      case _ => ErrorAcceptHeaderInvalid
+      case AcceptsHmrcXml1()                       => Ok(<Hello><message>{h.message}</message></Hello>).as(MimeTypes.XML)
+      case AcceptsHmrcXml2()                       => Ok(<Hello2><message>{h.message}</message></Hello2>).as(MimeTypes.XML)
+      case _                                       => ErrorAcceptHeaderInvalid
     }
   }
 

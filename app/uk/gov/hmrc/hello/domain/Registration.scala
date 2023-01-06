@@ -23,4 +23,3 @@ case class Registration(serviceName: String, serviceUrl: String, metadata: Optio
 object Registration {
   implicit val format = Json.format[Registration]
 }
-

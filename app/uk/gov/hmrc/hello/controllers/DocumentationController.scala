@@ -24,7 +24,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton
-class DocumentationController @Inject()(assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
+class DocumentationController @Inject() (assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
 
   def definition(): Action[AnyContent] = {
     assets.at("/public/api", "definition.json")
