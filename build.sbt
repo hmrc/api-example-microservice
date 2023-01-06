@@ -36,7 +36,6 @@ lazy val microservice = (project in file("."))
   .settings(defaultSettings(): _*)
   .settings(
     name := appName,
-    targetJvm := "jvm-1.8",
     libraryDependencies ++= dependencies ++ testDependencies("test, it, component"),
     Test / parallelExecution:= false,
     Test / fork:= false,
