@@ -23,8 +23,8 @@ import play.api.Configuration
 import play.api.http.Status._
 import play.api.mvc._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
+import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
 import uk.gov.hmrc.hello.controllers._
 

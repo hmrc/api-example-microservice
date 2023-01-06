@@ -18,11 +18,13 @@ package uk.gov.hmrc.hello.controllers
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 
 @Singleton
