@@ -9,7 +9,7 @@ object AppDependencies {
   )
 
   def testDependencies(scope: String) = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"         % bootStrapVersion            % scope,
+    "uk.gov.hmrc"             %% "bootstrap-test-play-28"         % bootStrapVersion    % scope,
     "com.vladsch.flexmark"    %  "flexmark-all"                   % "0.36.8"            % scope,
     "org.scalaj"              %% "scalaj-http"                    % "2.4.0"             % scope,
     "com.github.tomakehurst"  %  "wiremock-jre8-standalone"       % "2.27.1"            % scope,

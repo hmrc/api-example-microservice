@@ -10,7 +10,7 @@ import bloop.integrations.sbt.BloopDefaults
 
 import scala.util.Properties
 
-bloopAggregateSourceDependencies in Global := true
+Global / bloopAggregateSourceDependencies := true
 
 lazy val appName = "api-example-microservice"
 lazy val ComponentTest = config("component") extend Test
@@ -28,7 +28,7 @@ inThisBuild(
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
-lazy val microservice = (project in file("."))
+lazy val microservice = Project(appName, file("."))
   .enablePlugins(plugins: _*)
   .settings(playSettings: _*)
   .settings(scalaSettings: _*)
@@ -36,7 +36,6 @@ lazy val microservice = (project in file("."))
   .settings(defaultSettings(): _*)
   .settings(
     name := appName,
-    targetJvm := "jvm-1.8",
     libraryDependencies ++= dependencies ++ testDependencies("test, it, component"),
     Test / parallelExecution:= false,
     Test / fork:= false,
@@ -64,7 +63,7 @@ lazy val microservice = (project in file("."))
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "testcommon",
     IntegrationTest / unmanagedSourceDirectories += baseDirectory.value / "it",
-    IntegrationTest / testGrouping := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
+    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
     IntegrationTest / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-eT"),
     IntegrationTest / parallelExecution := false,
     addTestReportOption(IntegrationTest, "int-test-reports")

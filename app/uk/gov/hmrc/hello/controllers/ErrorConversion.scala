@@ -32,7 +32,7 @@ trait ErrorConversion {
   protected def toResult[T](error: ErrorResponse, acceptHeader: Option[String]): Result = acceptHeader match {
     case Some(VndHmrcXml_1_0) | Some(VndHmrcXml_2_0) =>
       Status(error.httpStatusCode)(<errorResponse><code>{error.errorCode}</code><message>{error.message}</message></errorResponse>).as(MimeTypes.XML)
-    case _ => Status(error.httpStatusCode)(Json.toJson(error))
+    case _                                           => Status(error.httpStatusCode)(Json.toJson(error))
 
   }
 }
