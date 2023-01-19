@@ -6,6 +6,6 @@ It includes resources for testing access to the three different access levels:
 - *Say hello user* is an example of a user-restricted endpoint
 - *Say hello application* is an example of an application-restricted endpoint
 
-Further details of the different access levels are given on the [Authorisation](http://localhost:9680/api-documentation/docs/authorisation) page.
+Further details of the different access levels are given on the [Authorisation](/api-documentation/docs/authorisation) page.
 
-For more information about how to develop your own client applications, including example clients for this API, see [Tutorials](http://localhost:9680/api-documentation/docs/tutorials).
+For more information about how to develop your own client applications, including example clients for this API, see [Tutorials](/api-documentation/docs/tutorials).
