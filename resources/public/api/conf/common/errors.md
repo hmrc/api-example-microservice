@@ -4,5 +4,5 @@ We use standard HTTP status codes to show whether an API request succeeded or no
 - 400 to 499 if it failed because of a client error by your application
 - 500 to 599 if it failed because of an error on our server
 
-Errors specific to each API are shown in the Endpoints section, under Response. See our [reference guide](http://localhost:9680/api-documentation/docs/reference-guide#errors) for more on errors.
+Errors specific to each API are shown in the Endpoints section, under Response. See our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.
 
