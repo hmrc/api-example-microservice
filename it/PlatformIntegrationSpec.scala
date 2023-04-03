@@ -27,20 +27,22 @@ import uk.gov.hmrc.hello.common.utils.WireMockSugar
 import org.scalatest.TestData
 
 class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with WireMockSugar {
+
   override def newAppForTest(testData: TestData): Application = GuiceApplicationBuilder()
     .configure("run.mode" -> "Stub")
     .configure(Map(
-      "appName" -> "application-name",
-      "appUrl" -> "http://example.com",
-      "auditing.enabled" -> false,
+      "appName"                                    -> "application-name",
+      "appUrl"                                     -> "http://example.com",
+      "auditing.enabled"                           -> false,
       "microservice.services.service-locator.host" -> stubHost,
-      "microservice.services.service-locator.port" -> stubPort))
+      "microservice.services.service-locator.port" -> stubPort
+    ))
     .in(Mode.Test).build()
 
   trait Setup {
     implicit def mat: akka.stream.Materializer = app.injector.instanceOf[akka.stream.Materializer]
-    val documentationController = app.injector.instanceOf[DocumentationController]
-    val request = FakeRequest()
+    val documentationController                = app.injector.instanceOf[DocumentationController]
+    val request                                = FakeRequest()
     stubFor(post(urlMatching("http://localhost:11112/registration")).willReturn(aResponse().withStatus(NO_CONTENT)))
   }
 
