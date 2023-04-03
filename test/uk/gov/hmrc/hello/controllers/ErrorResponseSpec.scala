@@ -18,6 +18,7 @@ package uk.gov.hmrc.hello.controllers
 
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
+
 import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
 
 class ErrorResponseSpec extends AsyncHmrcSpec with ErrorConversion with HmrcMimeTypes {

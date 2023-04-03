@@ -67,11 +67,11 @@ trait Env extends ScalaDsl with EN with Matchers {
     }
   }
 
-  def startServer() {
+  def startServer(): Unit = {
     testServer.start()
   }
 
-  def shutdown() = {
+  def shutdown(): Unit = {
     wireMockServer.stop()
     if (testServer != null) testServer.stop()
   }
