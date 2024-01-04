@@ -10,17 +10,17 @@ import bloop.integrations.sbt.BloopDefaults
 
 import scala.util.Properties
 
+scalaVersion := "2.13.12"
+
 lazy val appName = "api-example-microservice"
 lazy val ComponentTest = config("component") extend Test
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
-scalaVersion := "2.13.8"
-
 Global / bloopAggregateSourceDependencies := true
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(plugins: _*)
