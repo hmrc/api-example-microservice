@@ -10,17 +10,17 @@ import bloop.integrations.sbt.BloopDefaults
 
 import scala.util.Properties
 
+scalaVersion := "2.13.12"
+
 lazy val appName = "api-example-microservice"
 lazy val ComponentTest = config("component") extend Test
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
-scalaVersion := "2.13.8"
-
 Global / bloopAggregateSourceDependencies := true
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(plugins: _*)
@@ -70,6 +70,14 @@ lazy val microservice = Project(appName, file("."))
     ComponentTest / unmanagedResourceDirectories += baseDirectory.value / "component" / "resources"
   )
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
+  .settings(
+    scalacOptions ++= Seq(
+      "-Wconf:cat=unused&src=views/.*\\.scala:s",
+      "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
+      "-Wconf:cat=unused&src=.*Routes\\.scala:s",
+      "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s"
+    )
+  )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests map { test =>
@@ -82,3 +90,12 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
       )
     )
   }
+
+commands ++= Seq(
+  Command.command("run-all-tests") { state => "test" :: "it:test" :: "component:test" :: state },
+
+  Command.command("clean-and-test") { state => "clean" :: "compile" :: "run-all-tests" :: state },
+
+  // Coverage does not need compile !
+  Command.command("pre-commit") { state => "clean" :: "scalafmtAll" :: "scalafixAll" :: "coverage" :: "run-all-tests" :: "coverageOff" :: "coverageAggregate" :: state }
+)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import play.mvc.Http.Status._
 
 object ErrorResponse {
 
-  implicit val errorResponseWrites = new Writes[ErrorResponse] {
+  implicit val errorResponseWrites: Writes[ErrorResponse] = new Writes[ErrorResponse] {
     def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
   }
 }

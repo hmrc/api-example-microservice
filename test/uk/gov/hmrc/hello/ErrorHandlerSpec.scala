@@ -19,10 +19,9 @@ package uk.gov.hmrc.hello
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-import akka.stream.testkit.NoMaterializer
-
 import play.api.Configuration
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -34,13 +33,12 @@ import uk.gov.hmrc.hello.controllers.{ErrorGenericBadRequest, ErrorInternalServe
 class ErrorHandlerSpec extends AsyncHmrcSpec {
 
   trait BaseSetup {
-    implicit val mat = NoMaterializer
+    implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
-    implicit val fakeRequest = FakeRequest()
-    val mockAuditConnector   = mock[AuditConnector]
-    val mockAuditResult      = mock[AuditResult]
-    val mockHttpAuditEvent   = mock[HttpAuditEvent]
-    val mockConfiguration    = mock[Configuration]
+    val mockAuditConnector = mock[AuditConnector]
+    val mockAuditResult    = mock[AuditResult]
+    val mockHttpAuditEvent = mock[HttpAuditEvent]
+    val mockConfiguration  = mock[Configuration]
 
     when(mockAuditConnector.sendEvent(*)(*, *)).thenReturn(Future.successful(mockAuditResult))
 
