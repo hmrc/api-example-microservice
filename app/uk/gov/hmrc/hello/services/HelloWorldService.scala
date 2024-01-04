@@ -19,13 +19,12 @@ package uk.gov.hmrc.hello.services
 import javax.inject.Singleton
 import scala.concurrent.Future
 
-import play.api.libs.json.Json
-import play.api.libs.json.OFormat
+import play.api.libs.json.{Json, OFormat}
 
 case class Hello(message: String)
 
 object Hello {
-  implicit val format: OFormat[Hello]= Json.format[Hello]
+  implicit val format: OFormat[Hello] = Json.format[Hello]
 }
 
 @Singleton

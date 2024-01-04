@@ -21,6 +21,7 @@ import scala.concurrent.Future
 
 import play.api.Configuration
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -28,17 +29,16 @@ import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
 import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
 import uk.gov.hmrc.hello.controllers.{ErrorGenericBadRequest, ErrorInternalServerError, ErrorNotFound, ErrorUnauthorized}
-import play.api.mvc.AnyContentAsEmpty
 
 class ErrorHandlerSpec extends AsyncHmrcSpec {
 
   trait BaseSetup {
     implicit val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
-    val mockAuditConnector   = mock[AuditConnector]
-    val mockAuditResult      = mock[AuditResult]
-    val mockHttpAuditEvent   = mock[HttpAuditEvent]
-    val mockConfiguration    = mock[Configuration]
+    val mockAuditConnector = mock[AuditConnector]
+    val mockAuditResult    = mock[AuditResult]
+    val mockHttpAuditEvent = mock[HttpAuditEvent]
+    val mockConfiguration  = mock[Configuration]
 
     when(mockAuditConnector.sendEvent(*)(*, *)).thenReturn(Future.successful(mockAuditResult))
 

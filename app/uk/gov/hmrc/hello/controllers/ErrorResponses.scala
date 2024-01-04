@@ -26,7 +26,7 @@ import play.mvc.Http.Status._
 
 object ErrorResponse {
 
-  implicit val errorResponseWrites: Writes[ErrorResponse]= new Writes[ErrorResponse] {
+  implicit val errorResponseWrites: Writes[ErrorResponse] = new Writes[ErrorResponse] {
     def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
   }
 }
