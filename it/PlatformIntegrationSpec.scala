@@ -15,16 +15,19 @@
  */
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import org.apache.pekko.stream.Materializer
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import org.scalatest.TestData
+
 import play.api.{Application, Mode}
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, contentAsString, status}
+
 import uk.gov.hmrc.hello.controllers.DocumentationController
 import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
 import uk.gov.hmrc.hello.common.utils.WireMockSugar
-import org.scalatest.TestData
 
 class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with WireMockSugar {
 
@@ -40,9 +43,9 @@ class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with
     .in(Mode.Test).build()
 
   trait Setup {
-    implicit def mat: org.apache.pekko.stream.Materializer = app.injector.instanceOf[org.apache.pekko.stream.Materializer]
-    val documentationController                            = app.injector.instanceOf[DocumentationController]
-    val request                                            = FakeRequest()
+    implicit def mat: Materializer = app.injector.instanceOf[Materializer]
+    val documentationController    = app.injector.instanceOf[DocumentationController]
+    val request                    = FakeRequest()
     stubFor(post(urlMatching("http://localhost:11112/registration")).willReturn(aResponse().withStatus(NO_CONTENT)))
   }
 

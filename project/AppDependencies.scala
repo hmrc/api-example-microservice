@@ -10,7 +10,6 @@ object AppDependencies {
 
   def testDependencies(scope: String) = Seq(
     "uk.gov.hmrc"             %% "bootstrap-test-play-30"         % bootStrapVersion,
-    "com.vladsch.flexmark"    %  "flexmark-all"                   % "0.36.8",
     "org.scalaj"              %% "scalaj-http"                    % "2.4.2",
     "com.github.tomakehurst"  %  "wiremock-jre8-standalone"       % "2.35.0",
     "org.mockito"             %% "mockito-scala-scalatest"        % "1.17.29",
