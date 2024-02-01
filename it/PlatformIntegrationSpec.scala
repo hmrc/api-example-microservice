@@ -40,9 +40,9 @@ class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with
     .in(Mode.Test).build()
 
   trait Setup {
-    implicit def mat: akka.stream.Materializer = app.injector.instanceOf[akka.stream.Materializer]
-    val documentationController                = app.injector.instanceOf[DocumentationController]
-    val request                                = FakeRequest()
+    implicit def mat: org.apache.pekko.stream.Materializer = app.injector.instanceOf[org.apache.pekko.stream.Materializer]
+    val documentationController                            = app.injector.instanceOf[DocumentationController]
+    val request                                            = FakeRequest()
     stubFor(post(urlMatching("http://localhost:11112/registration")).willReturn(aResponse().withStatus(NO_CONTENT)))
   }
 
