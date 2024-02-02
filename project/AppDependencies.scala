@@ -2,15 +2,14 @@ import play.core.PlayVersion
 import sbt._
 
 object AppDependencies {
-  val bootStrapVersion = "7.19.0"
+  val bootStrapVersion = "8.4.0"
 
   lazy val dependencies = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-backend-play-28"      % bootStrapVersion
+    "uk.gov.hmrc"             %% "bootstrap-backend-play-30"      % bootStrapVersion
   )
 
   def testDependencies(scope: String) = Seq(
-    "uk.gov.hmrc"             %% "bootstrap-test-play-28"         % bootStrapVersion,
-    "com.vladsch.flexmark"    %  "flexmark-all"                   % "0.36.8",
+    "uk.gov.hmrc"             %% "bootstrap-test-play-30"         % bootStrapVersion,
     "org.scalaj"              %% "scalaj-http"                    % "2.4.2",
     "com.github.tomakehurst"  %  "wiremock-jre8-standalone"       % "2.35.0",
     "org.mockito"             %% "mockito-scala-scalatest"        % "1.17.29",
