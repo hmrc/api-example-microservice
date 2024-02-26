@@ -16,18 +16,17 @@
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.pekko.stream.Materializer
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import org.scalatest.TestData
+import org.scalatestplus.play.guice.GuiceOneAppPerTest
 
-import play.api.{Application, Mode}
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, contentAsString, status}
+import play.api.{Application, Mode}
 
+import uk.gov.hmrc.hello.common.utils.{AsyncHmrcSpec, WireMockSugar}
 import uk.gov.hmrc.hello.controllers.DocumentationController
-import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
-import uk.gov.hmrc.hello.common.utils.WireMockSugar
 
 class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with WireMockSugar {
 
