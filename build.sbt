@@ -73,6 +73,7 @@ lazy val it = (project in file("it"))
   .dependsOn(microservice % "test->test")
   .settings(
     name := "integration-tests",
+    addTestReportOption(Test, "int-test-reports")
   )
 
 commands ++= Seq(
