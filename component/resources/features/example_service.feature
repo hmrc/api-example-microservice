@@ -1,5 +1,4 @@
 Feature: Fetch Example
-
   Background:
     Given header 'Accept' is 'valid json'
 
