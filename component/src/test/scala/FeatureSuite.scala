@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import steps.Env
 import io.cucumber.junit.{Cucumber, CucumberOptions}
-import org.junit.{AfterClass, BeforeClass}
 import org.junit.runner.RunWith
+import org.junit.{AfterClass, BeforeClass}
+import steps.Env
 
 @RunWith(classOf[Cucumber])
 @CucumberOptions(
-  features = Array("classpath:features"),
-  glue = Array("classpath:steps"),
-  plugin = Array("pretty",
+  dryRun = false,
+  plugin = Array(
+    "pretty",
     "html:target/component-reports/cucumber",
-    "json:target/component-reports/cucumber.json"),
-  tags = Array("not @wip")
+    "json:target/component-reports/cucumber.json"
+  )
 )
 class FeatureSuite
 

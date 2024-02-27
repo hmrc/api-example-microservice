@@ -19,23 +19,24 @@ package steps
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
-import cucumber.api.scala.{EN, ScalaDsl}
+import io.cucumber.scala.{EN, ScalaDsl}
+import org.scalatest.matchers.should.Matchers
+
 import play.api.Mode
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.TestServer
-import org.scalatest.matchers.should.Matchers
 
 trait Env extends ScalaDsl with EN with Matchers {
   val testServerPort = 9000
   val testServerHost = sys.env.getOrElse("HOST", s"http://localhost:$testServerPort")
 
   val config = Map[String, Any](
-    "auditing.enabled" -> false,
-    "microservice.services.datastream.host" -> stubHost,
-    "microservice.services.datastream.port" -> stubPort,
-    "microservice.services.datastream.enabled" -> false,
-    "microservice.services.service-locator.host" -> stubHost,
-    "microservice.services.service-locator.port" -> stubPort,
+    "auditing.enabled"                              -> false,
+    "microservice.services.datastream.host"         -> stubHost,
+    "microservice.services.datastream.port"         -> stubPort,
+    "microservice.services.datastream.enabled"      -> false,
+    "microservice.services.service-locator.host"    -> stubHost,
+    "microservice.services.service-locator.port"    -> stubPort,
     "microservice.services.service-locator.enabled" -> false
   )
 
@@ -47,22 +48,22 @@ trait Env extends ScalaDsl with EN with Matchers {
 
   private lazy val testServer = TestServer(testServerPort, application)
 
-  val stubPort = sys.env.getOrElse("WIREMOCK_PORT", "11111").toInt
-  val stubHost = "localhost"
+  val stubPort    = sys.env.getOrElse("WIREMOCK_PORT", "11111").toInt
+  val stubHost    = "localhost"
   val wireMockUrl = s"http://$stubHost:$stubPort"
 
   private lazy val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
 
-  Before { _ =>
-    if(!wireMockServer.isRunning) {
+  Before {
+    if (!wireMockServer.isRunning) {
       wireMockServer.start()
     }
 
     WireMock.configureFor(stubHost, stubPort)
   }
 
-  After { _ =>
-    if(wireMockServer.isRunning) {
+  After {
+    if (wireMockServer.isRunning) {
       WireMock.reset()
     }
   }

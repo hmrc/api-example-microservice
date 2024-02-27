@@ -16,49 +16,51 @@
 
 package steps
 
-import steps.Request.{AcceptBadFormat, AcceptMissing, _}
-import cucumber.api.scala.{EN, ScalaDsl}
-import play.api.libs.json.Json
-import scalaj.http.Http
-import uk.gov.hmrc.hello.controllers.HmrcMimeTypes
+import io.cucumber.scala.{EN, ScalaDsl}
 import org.scalatest.matchers.should.Matchers
+import scalaj.http.Http
+import steps.Request.{AcceptBadFormat, AcceptMissing, _}
+
+import play.api.libs.json.Json
+
+import uk.gov.hmrc.hello.controllers.HmrcMimeTypes
 
 object World {
-  var responseCode: Int = 0
-  var responseBody: String = ""
+  var responseCode: Int                   = 0
+  var responseBody: String                = ""
   var responseContentType: Option[String] = None
-  var acceptHeader: AcceptHeader = AcceptUndefined
+  var acceptHeader: AcceptHeader          = AcceptUndefined
 }
 
 class HelloWorldServiceSteps extends ScalaDsl with EN with Matchers with HmrcMimeTypes {
 
-  When( """^I GET the resource '(.*)'$""") { (url: String) =>
-    val response  = Http(s"${Env.testServerHost}$url").
-      addAcceptHeader(World.acceptHeader).asString
+  When("""^I GET the resource '(.*)'$""") { (url: String) =>
+    val response = Http(s"${Env.testServerHost}$url").addAcceptHeader(World.acceptHeader).asString
 
     World.responseCode = response.code
     World.responseBody = response.body
     World.responseContentType = response.contentType
   }
 
-  Then( """^the status code should be '(.*)'$""") { (st: String) =>
+  Then("""^the status code should be '(.*)'$""") { (st: String) =>
     Responses.statusCodes(st) shouldBe World.responseCode
   }
 
-  Given( """^header 'Accept' is '(.*)'$""") { (acceptValue: String) =>
+  Given("""^header 'Accept' is '(.*)'$""") { (acceptValue: String) =>
     World.acceptHeader = acceptValue match {
-      case "not provided" => AcceptMissing
+      case "not provided"    => AcceptMissing
       case "badly formatted" => AcceptBadFormat
-      case "valid json" => AcceptValidJsonv
-      case "valid xml" => AcceptValidXml
-      case _ => throw new scala.RuntimeException("Undefined value for accept in the step")
+      case "valid json"      => AcceptValidJsonv
+      case "valid xml"       => AcceptValidXml
+      case _                 => throw new scala.RuntimeException("Undefined value for accept in the step")
     }
   }
 
-  Then( """^I should receive JSON response:$""") { (expectedResponseBody: String) =>
+  Then("""^I should receive JSON response:$""") { (expectedResponseBody: String) =>
     Json.parse(expectedResponseBody) shouldBe Json.parse(World.responseBody)
   }
 
-  Then( """^I should receive XML response:$""") { (expectedResponseBody: String) =>
+  Then("""^I should receive XML response:$""") { (expectedResponseBody: String) =>
     expectedResponseBody shouldBe World.responseBody
-  }}
+  }
+}

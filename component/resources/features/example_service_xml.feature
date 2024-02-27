@@ -1,5 +1,4 @@
 Feature: Fetch Example XML
-
   Background:
     Given header 'Accept' is 'valid xml'
 

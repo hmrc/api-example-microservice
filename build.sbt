@@ -11,7 +11,6 @@ import bloop.integrations.sbt.BloopDefaults
 import scala.util.Properties
 
 lazy val appName = "api-example-microservice"
-lazy val ComponentTest = config("component") extend Test
 lazy val plugins: Seq[Plugins] = Seq(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
@@ -33,13 +32,13 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     name := appName,
-    libraryDependencies ++= dependencies ++ testDependencies("test, component"),
+    libraryDependencies ++= dependencies ++ testDependencies(),
     Test / parallelExecution:= false,
     Test / fork:= false
   )
   .settings(ScoverageSettings())
   .settings(
-    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
   .configs(Test)
   .settings(inConfig(Test)(Defaults.testSettings): _*)
@@ -50,15 +49,7 @@ lazy val microservice = Project(appName, file("."))
     Test / unmanagedSourceDirectories += baseDirectory.value / "test",
     addTestReportOption(Test, "test-reports")
   )
-  .configs(ComponentTest)
-  .settings(inConfig(ComponentTest)(Defaults.testSettings): _*)
-  .settings(inConfig(ComponentTest)(BloopDefaults.configSettings))
-  .settings(
-    ComponentTest / testOptions := Seq.empty,
-    ComponentTest / unmanagedSourceDirectories += baseDirectory.value / "component" / "scala",
-    ComponentTest / unmanagedSourceDirectories += baseDirectory.value / "testcommon",
-    ComponentTest / unmanagedResourceDirectories += baseDirectory.value / "component" / "resources"
-  )
+  .settings(crossPaths := false)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     scalacOptions ++= Seq(
@@ -69,27 +60,26 @@ lazy val microservice = Project(appName, file("."))
     )
   )
 
+lazy val component = (project in file("component"))
+  .dependsOn(microservice % "test->test")
+  .settings(
+    name := "component-tests",
+    Test / unmanagedResourceDirectories += baseDirectory.value / "resources",
+    Test / testOptions := Seq(Tests.Argument(TestFrameworks.JUnit, "-a"))
+  )
+
 lazy val it = (project in file("it"))
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
-
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
-  tests map { test =>
-    Group(
-      test.name,
-      Seq(test),
-      SubProcess(
-        ForkOptions().withRunJVMOptions(
-          Vector(s"-Dtest.name={test.name}", s"-Dtest_driver=${Properties.propOrElse("test_driver", "chrome")}"))
-      )
-    )
-  }
+  .settings(
+    name := "integration-tests",
+  )
 
 commands ++= Seq(
-  Command.command("run-all-tests") { state => "test" :: "it / test" :: "component:test" :: state },
+  Command.command("run-all-tests") { state => "test" :: "it / test" :: "component / test" :: state },
 
   Command.command("clean-and-test") { state => "clean" :: "compile" :: "run-all-tests" :: state },
 
   // Coverage does not need compile !
-  Command.command("pre-commit") { state => "clean" :: "scalafmtAll" :: "it / scalafmtAll" :: "scalafixAll" :: "it / scalafixAll" :: "coverage" :: "run-all-tests" :: "coverageOff" :: "coverageAggregate" :: state }
+  Command.command("pre-commit") { state => "clean" :: "scalafmtAll" :: "it / scalafmtAll" :: "component / scalafmtAll" :: "scalafixAll" :: "it / scalafixAll" :: "component / scalafixAll" :: "coverage" :: "run-all-tests" :: "coverageOff" :: "coverageAggregate" :: state }
 )
