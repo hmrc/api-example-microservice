@@ -18,7 +18,6 @@ Global / bloopAggregateSourceDependencies := true
 
 ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / majorVersion := 0
-ThisBuild / organization := "uk.gov.hmrc"
 ThisBuild / retrieveManaged := true
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
