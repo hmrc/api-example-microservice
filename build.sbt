@@ -48,7 +48,6 @@ lazy val microservice = Project(appName, file("."))
     Test / unmanagedSourceDirectories += baseDirectory.value / "test",
     addTestReportOption(Test, "test-reports")
   )
-  .settings(crossPaths := false)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     scalacOptions ++= Seq(
