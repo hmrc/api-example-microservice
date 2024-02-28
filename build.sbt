@@ -18,7 +18,6 @@ Global / bloopAggregateSourceDependencies := true
 
 ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / majorVersion := 0
-ThisBuild / organization := "uk.gov.hmrc"
 ThisBuild / retrieveManaged := true
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
@@ -49,7 +48,6 @@ lazy val microservice = Project(appName, file("."))
     Test / unmanagedSourceDirectories += baseDirectory.value / "test",
     addTestReportOption(Test, "test-reports")
   )
-  .settings(crossPaths := false)
   .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
   .settings(
     scalacOptions ++= Seq(
