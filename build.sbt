@@ -3,6 +3,7 @@ import play.core.PlayVersion
 import sbt.Keys.{testOptions, _}
 import sbt.Tests.{Group, SubProcess}
 import sbt.{Tests, _}
+import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import AppDependencies._
@@ -63,7 +64,8 @@ lazy val component = (project in file("component"))
   .settings(
     name := "component-tests",
     Test / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Test / testOptions := Seq(Tests.Argument(TestFrameworks.JUnit, "-a"))
+    Test / testOptions := Seq(Tests.Argument(TestFrameworks.JUnit, "-a")),
+    DefaultBuildSettings.itSettings()
   )
 
 lazy val it = (project in file("it"))
@@ -71,14 +73,16 @@ lazy val it = (project in file("it"))
   .dependsOn(microservice % "test->test")
   .settings(
     name := "integration-tests",
-    addTestReportOption(Test, "int-test-reports")
+    addTestReportOption(Test, "int-test-reports"),
+    DefaultBuildSettings.itSettings()
   )
 
 commands ++= Seq(
-  Command.command("run-all-tests") { state => "test" :: "it / test" :: "component / test" :: state },
-
+  Command.command("cleanAll") { state => "clean" :: "it/clean" :: "component/clean" :: state },
+  Command.command("fmtAll") { state => "scalafmtAll" :: "it/scalafmtAll" :: "component/scalafmtAll" :: state },
+  Command.command("fixAll") { state => "scalafixAll" :: "it/scalafixAll" :: "component/scalafixAll" :: state },
+  Command.command("testAll") { state => "test" :: "it/test" :: "component/test" :: state },
+  Command.command("run-all-tests") { state => "testAll" :: state },
   Command.command("clean-and-test") { state => "clean" :: "compile" :: "run-all-tests" :: state },
-
-  // Coverage does not need compile !
-  Command.command("pre-commit") { state => "clean" :: "scalafmtAll" :: "it / scalafmtAll" :: "component / scalafmtAll" :: "scalafixAll" :: "it / scalafixAll" :: "component / scalafixAll" :: "coverage" :: "run-all-tests" :: "coverageOff" :: "coverageAggregate" :: state }
+  Command.command("pre-commit") { state => "cleanAll" :: "fmtAll" :: "fixAll" :: "coverage" :: "run-all-tests" :: "coverageOff" :: "coverageAggregate" :: state }
 )
