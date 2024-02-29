@@ -64,7 +64,8 @@ lazy val component = (project in file("component"))
   .settings(
     name := "component-tests",
     Test / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Test / testOptions := Seq(Tests.Argument(TestFrameworks.JUnit, "-a"))
+    Test / testOptions := Seq(Tests.Argument(TestFrameworks.JUnit, "-a")),
+    DefaultBuildSettings.itSettings()
   )
 
 lazy val it = (project in file("it"))
