@@ -1,11 +1,4 @@
 {
-  "scopes": [
-    {
-      "key":"hello",
-      "name":"Say Hello",
-      "description":"Say Hello!"
-    }
-  ],
   "api": {
     "name": "Hello World",
     "description": "A 'hello world' example of an API on the HMRC API Developer Hub.",
