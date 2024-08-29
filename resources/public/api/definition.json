@@ -1,6 +1,4 @@
 {
-  "scopes": [
-  ],
   "api": {
     "name": "Hello World",
     "description": "A 'hello world' example of an API on the HMRC API Developer Hub.",
