@@ -17,9 +17,10 @@
 package steps
 
 import io.cucumber.scala.{EN, ScalaDsl}
+import org.scalatest.EitherValues
 import org.scalatest.matchers.should.Matchers
-import scalaj.http.Http
 import steps.Request.{AcceptBadFormat, AcceptMissing, _}
+import sttp.client3.{SimpleHttpClient, UriContext, basicRequest}
 
 import play.api.libs.json.Json
 
@@ -32,14 +33,20 @@ object World {
   var acceptHeader: AcceptHeader          = AcceptUndefined
 }
 
-class HelloWorldServiceSteps extends ScalaDsl with EN with Matchers with HmrcMimeTypes {
-
+class HelloWorldServiceSteps extends ScalaDsl with EN with Matchers with HmrcMimeTypes with EitherValues {
   When("""^I GET the resource '(.*)'$""") { (url: String) =>
-    val response = Http(s"${Env.testServerHost}$url").addAcceptHeader(World.acceptHeader).asString
+    val fullUrl    = s"${Env.testServerHost}$url"
+    val httpClient = SimpleHttpClient()
+    val request    = basicRequest
+      .get(uri"$fullUrl")
+      .addAcceptHeader(World.acceptHeader)
+    val response   = httpClient.send(request)
 
-    World.responseCode = response.code
-    World.responseBody = response.body
+    World.responseCode = response.code.code
+    World.responseBody = response.body.merge
     World.responseContentType = response.contentType
+
+    httpClient.close()
   }
 
   Then("""^the status code should be '(.*)'$""") { (st: String) =>
