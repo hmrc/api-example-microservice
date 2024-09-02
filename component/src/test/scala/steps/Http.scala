@@ -16,7 +16,9 @@
 
 package steps
 
-import scalaj.http.HttpRequest
+import sttp.client3.Request
+
+import play.mvc.Http.HeaderNames
 
 object Request {
 
@@ -27,20 +29,18 @@ object Request {
   case object AcceptBadFormat  extends AcceptHeader
   case object AcceptUndefined  extends AcceptHeader
 
-  implicit class RequestBuilder(httpRequest: HttpRequest) {
+  implicit class RequestBuilder(httpRequest: Request[Either[String, String], Any]) {
 
-    def addAcceptHeader(acceptHeader: AcceptHeader): HttpRequest = {
+    def addAcceptHeader(acceptHeader: AcceptHeader): Request[Either[String, String], Any] = {
       acceptHeader match {
-        case AcceptMissing    => httpRequest.header("Accept", "")
-        case AcceptValidJsonv => httpRequest.header("Accept", "application/vnd.hmrc.1.0+json")
-        case AcceptValidXml   => httpRequest.header("Accept", "application/vnd.hmrc.1.0+xml")
-        case AcceptBadFormat  => httpRequest.header("Accept", "application/hmrc.1.0+xml")
+        case AcceptMissing    => httpRequest.header(HeaderNames.ACCEPT, "")
+        case AcceptValidJsonv => httpRequest.header(HeaderNames.ACCEPT, "application/vnd.hmrc.1.0+json")
+        case AcceptValidXml   => httpRequest.header(HeaderNames.ACCEPT, "application/vnd.hmrc.1.0+xml")
+        case AcceptBadFormat  => httpRequest.header(HeaderNames.ACCEPT, "application/hmrc.1.0+xml")
         case AcceptUndefined  => throw new scala.RuntimeException("Undefined accept in the scenario - no accept status defined")
       }
     }
-
   }
-
 }
 
 object Responses {
@@ -57,5 +57,4 @@ object Responses {
     "INTERNAL_SERVER_ERROR"  -> 500,
     "BAD_GATEWAY"            -> 502
   )
-
 }

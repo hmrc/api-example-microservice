@@ -27,8 +27,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.TestServer
 
 trait Env extends ScalaDsl with EN with Matchers {
-  val testServerPort = 9000
-  val testServerHost = sys.env.getOrElse("HOST", s"http://localhost:$testServerPort")
+  val testServerPort      = 9000
+  lazy val testServerHost = sys.env.getOrElse("HOST", s"http://localhost:$testServerPort")
 
   val config = Map[String, Any](
     "auditing.enabled"                              -> false,
