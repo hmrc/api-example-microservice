@@ -145,6 +145,7 @@ paths:
       security:
       - userRestricted:
         - hello
+        - foobar
         
   /hello/application:
     get:
