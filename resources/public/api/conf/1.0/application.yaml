@@ -67,6 +67,31 @@ components:
           "application/vnd.hmrc.1.0+xml"
         ]
       required: true
+
+    forename:
+      name: forename
+      description: The forename of the user
+      in: path
+      schema:
+        type: string
+      required: true
+
+      middlename:
+        name: middlename
+        description: The middlename of the user
+        in: path
+        schema:
+          type: string
+        required: true
+
+      surname:
+        name: surname
+        description: The surname of the user
+        in: path
+        schema:
+          type: string
+        required: true
+
   securitySchemes:
     userRestricted:
       type: oauth2
@@ -190,6 +215,7 @@ paths:
         - api-example-microservice
       parameters:
         - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/forename'
       responses:
         200:
           description: "OK Response"
@@ -213,29 +239,7 @@ paths:
         - api-example-microservice
       parameters:
         - $ref: '#/components/parameters/acceptHeader'
-      responses:
-        200:
-          description: "OK Response"
-          content:
-            application/json:
-              example:
-                {
-                  "message" : "Hello World"
-                }
-      security:
-        - {}
-
-  /world/{forename}/trigger/{surname}:
-    get:
-      summary: Forename, trigger and Surname
-      description: |
-        A simple example for integrating with an unrestricted service.
-
-        Any request to this endpoint initiates a 'Hello World' response.
-      tags:
-        - api-example-microservice
-      parameters:
-        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/forename'
       responses:
         200:
           description: "OK Response"
