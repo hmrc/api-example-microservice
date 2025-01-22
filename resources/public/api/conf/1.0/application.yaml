@@ -76,21 +76,21 @@ components:
         type: string
       required: true
 
-      middlename:
-        name: middlename
-        description: The middlename of the user
-        in: path
-        schema:
-          type: string
-        required: true
+    middlename:
+      name: middlename
+      description: The middlename of the user
+      in: path
+      schema:
+        type: string
+      required: true
 
-      surname:
-        name: surname
-        description: The surname of the user
-        in: path
-        schema:
-          type: string
-        required: true
+    surname:
+      name: surname
+      description: The surname of the user
+      in: path
+      schema:
+        type: string
+      required: true
 
   securitySchemes:
     userRestricted:
@@ -240,6 +240,32 @@ paths:
       parameters:
         - $ref: '#/components/parameters/acceptHeader'
         - $ref: '#/components/parameters/forename'
+        - $ref: '#/components/parameters/surname'
+      responses:
+        200:
+          description: "OK Response"
+          content:
+            application/json:
+              example:
+                {
+                  "message" : "Hello World"
+                }
+      security:
+        - {}
+
+  /world/{forename}/{middlename}:
+    get:
+      summary: Forename and middlename
+      description: |
+        A simple example for integrating with an unrestricted service.
+
+        Any request to this endpoint initiates a 'Hello World' response.
+      tags:
+        - api-example-microservice
+      parameters:
+        - $ref: '#/components/parameters/acceptHeader'
+        - $ref: '#/components/parameters/forename'
+        - $ref: '#/components/parameters/middlename'
       responses:
         200:
           description: "OK Response"
