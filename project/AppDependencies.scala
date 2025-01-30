@@ -2,7 +2,7 @@ import play.core.PlayVersion
 import sbt._
 
 object AppDependencies {
-  val bootStrapVersion = "8.4.0"
+  val bootStrapVersion = "9.7.0"
 
   lazy val dependencies = Seq(
     "uk.gov.hmrc"             %% "bootstrap-backend-play-30"      % bootStrapVersion
