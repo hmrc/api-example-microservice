@@ -35,9 +35,9 @@ info:
     [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.
   
 servers:
-- url: https://test-api.service.hmrc.gov.uk/hello
+- url: https://test-api.service.hmrc.gov.uk
   description: Sandbox
-- url: https://api.service.hmrc.gov.uk/hello
+- url: https://api.service.hmrc.gov.uk/
   description: Production
 
 components:
@@ -87,7 +87,7 @@ components:
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
           scopes: {}
 paths:
-  /world:
+  /hello/world:
     get:
       summary: Say hello world
       description: |
@@ -110,7 +110,7 @@ paths:
       security:
       - {}
                 
-  /user:
+  /hello/user:
     get:
       summary: Say hello user
       description: |
@@ -143,7 +143,7 @@ paths:
       - userScheme:
         - hello
         
-  /application:
+  /hello/application:
     get:
       summary: Say hello application
       description: | 
