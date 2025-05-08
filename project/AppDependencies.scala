@@ -1,7 +1,7 @@
 import sbt._
 
 object AppDependencies {
-  val bootStrapVersion = "9.7.0"
+  val bootStrapVersion = "9.11.0"
 
   lazy val dependencies = Seq(
     "uk.gov.hmrc"             %% "bootstrap-backend-play-30"      % bootStrapVersion
