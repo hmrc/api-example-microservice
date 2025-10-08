@@ -24,9 +24,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, contentAsString, status}
 import play.api.{Application, Mode}
+import uk.gov.hmrc.platform.controllers.DocumentationController
 
 import uk.gov.hmrc.hello.common.utils.{AsyncHmrcSpec, WireMockSugar}
-import uk.gov.hmrc.hello.controllers.DocumentationController
 
 class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with WireMockSugar {
 
