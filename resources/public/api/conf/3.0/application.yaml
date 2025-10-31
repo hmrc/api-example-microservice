@@ -1,0 +1,35 @@
+openapi: "3.0.3"
+
+info:
+  version: "3.0"
+  title: Hello World
+  description: |
+    # Overview
+    Testing various endpoint combinations in the AWS API Gateway
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk/
+  description: Production
+
+components:
+  parameters:
+    acceptHeader:
+      name: Accept
+      in: header
+      schema:
+        type: string
+        enum: [ "application/vnd.hmrc.3.0+json" ]
+      required: true
+
+paths:
+  /hello/world:
+    get:
+      summary: Hello world
+      parameters:
+      - $ref: '#/components/parameters/acceptHeader'
+      responses:
+        201:
+          description: "No Content"
+      security:
+      - {}
