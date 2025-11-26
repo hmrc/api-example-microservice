@@ -36,17 +36,6 @@ lazy val microservice = Project(appName, file("."))
     )
   )
 
-lazy val component = (project in file("component"))
-  .dependsOn(microservice % "test->test")
-  .settings(
-    name := "component-tests",
-    Test / unmanagedSourceDirectories += baseDirectory.value / "test",
-    Test / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Test / testOptions := Seq(Tests.Argument(TestFrameworks.JUnit, "-a")),
-    publishArtifact := false,
-    Test / fork := false
-  )
-
 lazy val it = (project in file("it"))
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
@@ -56,10 +45,10 @@ lazy val it = (project in file("it"))
   )
 
 commands ++= Seq(
-  Command.command("cleanAll") { state => "clean" :: "it/clean" :: "component/clean" :: state },
-  Command.command("fmtAll") { state => "scalafmtAll" :: "it/scalafmtAll" :: "component/scalafmtAll" :: state },
-  Command.command("fixAll") { state => "scalafixAll" :: "it/scalafixAll" :: "component/scalafixAll" :: state },
-  Command.command("testAll") { state => "test" :: "it/test" :: "component/test" :: state },
+  Command.command("cleanAll") { state => "clean" :: "it/clean" :: state },
+  Command.command("fmtAll") { state => "scalafmtAll" :: "it/scalafmtAll" :: state },
+  Command.command("fixAll") { state => "scalafixAll" :: "it/scalafixAll" :: state },
+  Command.command("testAll") { state => "test" :: "it/test" :: state },
   Command.command("run-all-tests") { state => "testAll" :: state },
   Command.command("clean-and-test") { state => "cleanAll" :: "compile" :: "run-all-tests" :: state },
   Command.command("pre-commit") { state => "cleanAll" :: "fmtAll" :: "fixAll" :: "coverage" :: "testAll" :: "coverageOff" :: "coverageAggregate" :: state }

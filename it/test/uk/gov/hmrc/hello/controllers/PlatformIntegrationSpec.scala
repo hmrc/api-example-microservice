@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+package uk.gov.hmrc.hello.controllers
+
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.pekko.stream.Materializer
 import org.scalatest.TestData
@@ -31,14 +33,14 @@ import uk.gov.hmrc.hello.common.utils.{AsyncHmrcSpec, WireMockSugar}
 class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with WireMockSugar {
 
   override def newAppForTest(testData: TestData): Application = GuiceApplicationBuilder()
-    .configure("run.mode" -> "Stub")
-    .configure(Map(
+    .configure(
+      "run.mode"                                   -> "Stub",
       "appName"                                    -> "application-name",
       "appUrl"                                     -> "http://example.com",
       "auditing.enabled"                           -> false,
       "microservice.services.service-locator.host" -> stubHost,
       "microservice.services.service-locator.port" -> stubPort
-    ))
+    )
     .in(Mode.Test).build()
 
   trait Setup {
