@@ -83,7 +83,6 @@ Accept: application/vnd.hmrc.2.0+xml
 ```
 sbt test
 sbt it:test
-sbt component:test
 ```
 
 # Run locally
