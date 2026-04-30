@@ -13,6 +13,18 @@
         "version": "2.0",
         "status": "DEPRECATED",
         "endpointsEnabled": true
+      },
+      {
+        "version": "3.0",
+        "status": "STABLE",
+        "access": "INTERNAL",
+        "endpointsEnabled": true
+      },
+      {
+        "version": "4.0",
+        "status": "STABLE",
+        "access": "CONTROLLED",
+        "endpointsEnabled": true
       }
     ]
   }
