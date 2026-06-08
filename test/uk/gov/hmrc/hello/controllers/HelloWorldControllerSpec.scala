@@ -17,12 +17,15 @@
 package uk.gov.hmrc.hello.controllers
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 import play.api.http.HeaderNames
 import play.api.http.Status.{NOT_ACCEPTABLE, OK}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 
 import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
@@ -30,8 +33,11 @@ import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 class HelloWorldControllerSpec extends AsyncHmrcSpec {
 
   trait Setup {
-    val validator = new HeaderValidator(Helpers.stubControllerComponents())
-    val underTest = new HelloWorldController(validator, new HelloWorldService, Helpers.stubControllerComponents())
+    val validator         = new HeaderValidator(Helpers.stubControllerComponents())
+    val mockAuthConnector = mock[AuthConnector]
+    when(mockAuthConnector.authorise(*, eqTo(EmptyRetrieval))(*, *)).thenReturn(Future.successful(None))
+
+    val underTest = new HelloWorldController(validator, new HelloWorldService, Helpers.stubControllerComponents(), mockAuthConnector)
   }
 
   "HelloWorldController" should {

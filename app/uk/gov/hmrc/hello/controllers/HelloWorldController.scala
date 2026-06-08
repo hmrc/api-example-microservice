@@ -22,14 +22,20 @@ import scala.concurrent.{ExecutionContext, Future}
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisationException, AuthorisedFunctions}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 
 @Singleton
-class HelloWorldController @Inject() (headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)(implicit ec: ExecutionContext)
-    extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling {
+class HelloWorldController @Inject() (
+    headerValidator: HeaderValidator,
+    service: HelloWorldService,
+    val cc: ControllerComponents,
+    val authConnector: AuthConnector
+  )(implicit ec: ExecutionContext
+  ) extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling with AuthorisedFunctions {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -50,7 +56,11 @@ class HelloWorldController @Inject() (headerValidator: HeaderValidator, service:
   }
 
   private def callAndRenderHello(f: Request[_] => Future[Hello]): Request[AnyContent] => Future[Result] = { implicit request =>
-    f(request).map(renderHello(_))
+    authorised() {
+      f(request).map(renderHello(_))
+    } recover {
+      case e: AuthorisationException => Unauthorized(Json.obj("errorMessage" -> e.getMessage))
+    }
   }
 
   final def world: Action[AnyContent] = headerValidator.validateAcceptHeader.async { callAndRenderHello(_ => service.fetchWorld) }
