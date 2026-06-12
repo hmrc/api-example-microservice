@@ -22,7 +22,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
 import play.api.mvc._
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
@@ -30,8 +29,6 @@ import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 @Singleton
 class HelloWorldController @Inject() (headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)(implicit ec: ExecutionContext)
     extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling {
-
-  implicit val hc: HeaderCarrier = HeaderCarrier()
 
   // Due to the need to demonstrate validation, some of these Accept headers are never present by the time we reach here.
   // However it does demonstrate how to handle multiple versions and types.
