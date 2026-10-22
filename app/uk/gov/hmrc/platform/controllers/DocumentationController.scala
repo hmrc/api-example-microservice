@@ -20,22 +20,21 @@ import javax.inject.{Inject, Singleton}
 
 import controllers.Assets
 
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import play.api.http.ContentTypes
-import play.api.http.MimeTypes
-import play.api.mvc.Codec
 import play.api.Configuration
+import play.api.http.{ContentTypes, MimeTypes}
+import play.api.mvc.{Action, AnyContent, Codec, ControllerComponents}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton
 class DocumentationController @Inject() (assets: Assets, cc: ControllerComponents, config: Configuration) extends BackendController(cc) {
+
   private val apiStatus =
     config.underlying.getString("api-platform.status")
 
   def definition(): Action[AnyContent] = Action {
-      Ok(
-        txt.definition(apiStatus)
-      )
+    Ok(
+      txt.definition(apiStatus)
+    )
       .as(ContentTypes.withCharset(MimeTypes.JSON)(Codec.utf_8))
   }
 
