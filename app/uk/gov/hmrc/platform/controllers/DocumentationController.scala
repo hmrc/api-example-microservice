@@ -22,21 +22,12 @@ import controllers.Assets
 
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import play.api.http.ContentTypes
-import play.api.http.MimeTypes
-import play.api.mvc.Codec
-import play.api.Configuration
 
 @Singleton
-class DocumentationController @Inject() (assets: Assets, cc: ControllerComponents, config: Configuration) extends BackendController(cc) {
-  private val apiStatus =
-    config.underlying.getString("api-platform.status")
+class DocumentationController @Inject() (assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
 
-  def definition(): Action[AnyContent] = Action {
-      Ok(
-        txt.definition(apiStatus)
-      )
-      .as(ContentTypes.withCharset(MimeTypes.JSON)(Codec.utf_8))
+  def definition(): Action[AnyContent] = {
+    assets.at("/public/api", "definition.json")
   }
 
   def specification(version: String, file: String): Action[AnyContent] = {
