@@ -21,32 +21,32 @@ sealed abstract class ErrorResponse(
     val errorCode: String,
     val message: String
   )
-import play.api.libs.json._
-import play.mvc.Http.Status._
+import play.api.libs.json.*
+import play.mvc.Http.Status.*
 
 object ErrorResponse {
 
-  implicit val errorResponseWrites: Writes[ErrorResponse] = new Writes[ErrorResponse] {
+  given errorResponseWrites: Writes[ErrorResponse] = new Writes[ErrorResponse] {
     def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
   }
 }
 
 case object ErrorUnauthorized extends ErrorResponse(UNAUTHORIZED, "UNAUTHORIZED", "Bearer token is missing or not authorized") {
-  implicit val fmt: Writes[ErrorUnauthorized.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
+  given fmt: Writes[ErrorUnauthorized.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
 }
 
 case object ErrorNotFound extends ErrorResponse(NOT_FOUND, "NOT_FOUND", "Resource was not found") {
-  implicit val fmt: Writes[ErrorNotFound.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
+  given fmt: Writes[ErrorNotFound.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
 }
 
 case object ErrorGenericBadRequest extends ErrorResponse(BAD_REQUEST, "BAD_REQUEST", "Bad Request") {
-  implicit val fmt: Writes[ErrorGenericBadRequest.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
+  given fmt: Writes[ErrorGenericBadRequest.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
 }
 
 case object ErrorAcceptHeaderInvalid extends ErrorResponse(NOT_ACCEPTABLE, "ACCEPT_HEADER_INVALID", "The accept header is missing or invalid") {
-  implicit val fmt: Writes[ErrorAcceptHeaderInvalid.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
+  given fmt: Writes[ErrorAcceptHeaderInvalid.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
 }
 
 case object ErrorInternalServerError extends ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error") {
-  implicit val fmt: Writes[ErrorInternalServerError.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
+  given fmt: Writes[ErrorInternalServerError.type] = ErrorResponse.errorResponseWrites.contramap(x => x)
 }

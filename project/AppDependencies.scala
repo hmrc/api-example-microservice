@@ -1,4 +1,4 @@
-import sbt._
+import sbt.*
 
 object AppDependencies {
   val bootStrapVersion = "10.8.0"

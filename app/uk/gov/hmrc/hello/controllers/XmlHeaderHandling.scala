@@ -19,19 +19,19 @@ package uk.gov.hmrc.hello.controllers
 import java.io.StringWriter
 import scala.xml.{Node, XML}
 
-import play.api.http.{Writeable, _}
-import play.api.mvc._
+import play.api.http.{Writeable, *}
+import play.api.mvc.*
 
 trait XmlHeaderHandling {
 
-  implicit def writeable(implicit codec: Codec): Writeable[Node] = {
-    Writeable(node => {
+  given writeable(using codec: Codec): Writeable[Node] = {
+    Writeable((node: Node) => {
       codec.encode(printXml(node).toString)
-    })
+    })(using contentType)
   }
 
-  implicit def contentType(implicit codec: Codec): ContentTypeOf[Node] = {
-    ContentTypeOf(Some(ContentTypes.XML(codec)))
+  given contentType(using codec: Codec): ContentTypeOf[Node] = {
+    ContentTypeOf(Some(ContentTypes.XML(using codec)))
   }
 
   def printXml(node: Node): String = {

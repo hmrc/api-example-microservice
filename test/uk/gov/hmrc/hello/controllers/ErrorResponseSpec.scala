@@ -31,19 +31,19 @@ class ErrorResponseSpec extends AsyncHmrcSpec with ErrorConversion with HmrcMime
     }
 
     "be translated to error Json when nothing is accepted" in {
-      toResult(ErrorAcceptHeaderInvalid, None).body.contentType shouldBe Some(MimeTypes.JSON)
+      toResultFor(ErrorAcceptHeaderInvalid, None).body.contentType shouldBe Some(MimeTypes.JSON)
     }
 
     "be translated to error Json when an invalid accept header is specified" in {
-      toResult(ErrorAcceptHeaderInvalid, Some("invalid")).body.contentType shouldBe Some(MimeTypes.JSON)
+      toResultFor(ErrorAcceptHeaderInvalid, Some("invalid")).body.contentType shouldBe Some(MimeTypes.JSON)
     }
 
     "be translated to error Hmrc Json" in {
-      toResult(ErrorAcceptHeaderInvalid, Some(VndHmrcJson_1_0)).body.contentType shouldBe Some(MimeTypes.JSON)
+      toResultFor(ErrorAcceptHeaderInvalid, Some(VndHmrcJson_1_0)).body.contentType shouldBe Some(MimeTypes.JSON)
     }
 
     "be translated to error Hmrc Xml" in {
-      toResult(ErrorAcceptHeaderInvalid, Some(VndHmrcXml_1_0)).body.contentType shouldBe Some(MimeTypes.XML)
+      toResultFor(ErrorAcceptHeaderInvalid, Some(VndHmrcXml_1_0)).body.contentType shouldBe Some(MimeTypes.XML)
     }
 
   }
