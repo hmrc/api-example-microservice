@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.hello.controllers
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import org.apache.pekko.stream.Materializer
 import org.scalatest.TestData
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
@@ -44,9 +44,9 @@ class PlatformIntegrationSpec extends AsyncHmrcSpec with GuiceOneAppPerTest with
     .in(Mode.Test).build()
 
   trait Setup {
-    implicit def mat: Materializer = app.injector.instanceOf[Materializer]
-    val documentationController    = app.injector.instanceOf[DocumentationController]
-    val request                    = FakeRequest()
+    given mat: Materializer     = app.injector.instanceOf[Materializer]
+    val documentationController = app.injector.instanceOf[DocumentationController]
+    val request                 = FakeRequest()
     stubFor(post(urlMatching("http://localhost:11112/registration")).willReturn(aResponse().withStatus(NO_CONTENT)))
   }
 

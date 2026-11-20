@@ -20,34 +20,34 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 import play.api.Configuration
-import play.api.http.Status._
-import play.api.mvc._
+import play.api.http.Status.*
+import play.api.mvc.*
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
-import uk.gov.hmrc.hello.controllers._
+import uk.gov.hmrc.hello.controllers.*
 
 @Singleton
-class ErrorHandler @Inject() (auditConnector: AuditConnector, httpAuditEvent: HttpAuditEvent, configuration: Configuration)(implicit ec: ExecutionContext)
+class ErrorHandler @Inject() (auditConnector: AuditConnector, httpAuditEvent: HttpAuditEvent, configuration: Configuration)(using ec: ExecutionContext)
     extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration) with ErrorConversion {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-    implicit val req = request
+    given RequestHeader = request
 
     super.onClientError(request, statusCode, message).map { auditedError =>
       statusCode match {
-        case NOT_FOUND    => ErrorNotFound
-        case BAD_REQUEST  => ErrorGenericBadRequest
-        case UNAUTHORIZED => ErrorUnauthorized
+        case NOT_FOUND    => ErrorNotFound.toResult
+        case BAD_REQUEST  => ErrorGenericBadRequest.toResult
+        case UNAUTHORIZED => ErrorUnauthorized.toResult
         case _            => auditedError
       }
     }
   }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
-    implicit val req = request
+    given RequestHeader = request
 
-    super.onServerError(request, exception).map(_ => ErrorInternalServerError)
+    super.onServerError(request, exception).map(_ => ErrorInternalServerError.toResult)
   }
 }

@@ -23,13 +23,14 @@ import play.api.mvc.{RequestHeader, Result, Results}
 
 trait ErrorConversion {
 
-  import HmrcMimeTypes._
-  import Results._
-  import XmlHeaderHandling._
+  import HmrcMimeTypes.*
+  import Results.*
 
-  implicit def toResult[T](error: ErrorResponse)(implicit request: RequestHeader): Result = toResult(error, request.headers.get(ACCEPT))
+  extension (error: ErrorResponse) {
+    def toResult[T](using request: RequestHeader): Result = toResultFor(error, request.headers.get(ACCEPT))
+  }
 
-  protected def toResult[T](error: ErrorResponse, acceptHeader: Option[String]): Result = acceptHeader match {
+  protected def toResultFor[T](error: ErrorResponse, acceptHeader: Option[String]): Result = acceptHeader match {
     case Some(VndHmrcXml_1_0) | Some(VndHmrcXml_2_0) =>
       Status(error.httpStatusCode)(<errorResponse><code>{error.errorCode}</code><message>{error.message}</message></errorResponse>).as(MimeTypes.XML)
     case _                                           => Status(error.httpStatusCode)(Json.toJson(error))

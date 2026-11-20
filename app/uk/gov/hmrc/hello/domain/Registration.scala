@@ -18,8 +18,8 @@ package uk.gov.hmrc.hello.domain
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Registration(serviceName: String, serviceUrl: String, metadata: Option[Map[String, String]] = None)
+case class Registration(serviceName: String, serviceUrl: String, metadata: Option[Map[String, String]])
 
 object Registration {
-  implicit val format: OFormat[Registration] = Json.format[Registration]
+  given format: OFormat[Registration] = Json.format[Registration]
 }

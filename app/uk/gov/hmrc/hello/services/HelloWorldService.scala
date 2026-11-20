@@ -24,7 +24,7 @@ import play.api.libs.json.{Json, OFormat}
 case class Hello(message: String)
 
 object Hello {
-  implicit val format: OFormat[Hello] = Json.format[Hello]
+  given format: OFormat[Hello] = Json.format[Hello]
 }
 
 @Singleton

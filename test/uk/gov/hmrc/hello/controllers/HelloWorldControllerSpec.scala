@@ -21,7 +21,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.http.HeaderNames
 import play.api.http.Status.{NOT_ACCEPTABLE, OK}
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Helpers}
 
 import uk.gov.hmrc.hello.common.utils.AsyncHmrcSpec

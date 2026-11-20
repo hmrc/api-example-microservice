@@ -21,13 +21,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 import play.api.http.MimeTypes
 import play.api.libs.json.Json
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import uk.gov.hmrc.hello.services.{Hello, HelloWorldService}
 
 @Singleton
-class HelloWorldController @Inject() (headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)(implicit ec: ExecutionContext)
+class HelloWorldController @Inject() (headerValidator: HeaderValidator, service: HelloWorldService, val cc: ControllerComponents)(using ec: ExecutionContext)
     extends BackendController(cc) with HmrcMimeTypes with ErrorConversion with XmlHeaderHandling {
 
   // Due to the need to demonstrate validation, some of these Accept headers are never present by the time we reach here.
@@ -42,11 +42,11 @@ class HelloWorldController @Inject() (headerValidator: HeaderValidator, service:
       case AcceptsHmrcJson1() | AcceptsHmrcJson2() => Ok(Json.toJson(h))
       case AcceptsHmrcXml1()                       => Ok(<Hello><message>{h.message}</message></Hello>).as(MimeTypes.XML)
       case AcceptsHmrcXml2()                       => Ok(<Hello2><message>{h.message}</message></Hello2>).as(MimeTypes.XML)
-      case _                                       => ErrorAcceptHeaderInvalid
+      case _                                       => ErrorAcceptHeaderInvalid.toResult
     }
   }
 
-  private def callAndRenderHello(f: Request[_] => Future[Hello]): Request[AnyContent] => Future[Result] = { implicit request =>
+  private def callAndRenderHello(f: Request[?] => Future[Hello]): Request[AnyContent] => Future[Result] = { implicit request =>
     f(request).map(renderHello(_))
   }
 

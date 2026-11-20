@@ -21,7 +21,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
-import play.api.mvc._
+import play.api.mvc.*
 
 @Singleton
 class HeaderValidator @Inject() (cc: ControllerComponents) extends Results with HmrcMimeTypes with ErrorConversion {
@@ -42,11 +42,10 @@ class HeaderValidator @Inject() (cc: ControllerComponents) extends Results with 
       override protected val executionContext: ExecutionContext = cc.executionContext
 
       def filter[T](input: Request[T]) = Future.successful {
-
-        implicit val r = input
+        given Request[T] = input
 
         if (!rules(input.headers.get("Accept"))) {
-          Some(ErrorAcceptHeaderInvalid)
+          Some(ErrorAcceptHeaderInvalid.toResult)
         } else {
           None
         }
